@@ -10,5 +10,13 @@ module.exports = defineConfig({
       })
       return definitions
     })
-  }
+  },
+  devServer: {
+    proxy: {
+      '/adminapi': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+      },
+    },
+  },
 })
