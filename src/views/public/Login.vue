@@ -64,7 +64,7 @@ const submitForm = () => {
         if (valid) {
             //3.设置token
             localStorage.setItem('token', 'xxxxxx'); //设置token
-            axios.get('/users').then(res => {
+            axios.post("/adminapi/user/login",loginForm).then(res =>{
                 console.log(res.data);
                 
             })
