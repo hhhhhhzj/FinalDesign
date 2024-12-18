@@ -65,7 +65,7 @@ const submitForm = () => {
             //3.设置token
             localStorage.setItem('token', 'xxxxxx'); //设置token
             //4.跳转到首页
-            router.push('/center');
+            router.push('/index');
         }
     })
 }
