@@ -5,9 +5,8 @@
 </template>
 
 <script setup>
-
+import axios from 'axios'
+axios.get('/adminapi/user/adminhome').then(res=>{
+    console.log(res.data);
+})
 </script>
-
-<style lang="scss" scoped>
-
-</style>
