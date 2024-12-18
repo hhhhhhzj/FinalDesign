@@ -57,7 +57,9 @@ router.beforeEach((to, from, next) => {
     } else {
       if (!store.state.isGetterRouter) {
         ConfigRouter()
-        next()
+        next({
+          path: to.fullPath
+        })
       } else {
         next()
       }

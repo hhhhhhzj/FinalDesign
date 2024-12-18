@@ -8,7 +8,7 @@ const routes = [
         component: () => import('@/views/admin/Center.vue')
     },
     {
-        path: '/userlist',
+        path: '/user-manage/userlist',
         component: () => import('@/views/admin/UserList.vue')
     },
     {
@@ -19,5 +19,14 @@ const routes = [
         path: '/house-manage/addhouse',
         component: () => import('@/views/admin/house-manage/HouseAdd.vue')
     },
+    {
+        path: '/',
+        redirect: '/index'
+    },
+    {
+        path: '/:pathMatch(.*)*',
+        name: 'notfound',
+        component: () => import('@/views/notfound/NotFound.vue')
+    }
 ]
 export default routes
