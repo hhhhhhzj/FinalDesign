@@ -1,4 +1,6 @@
 const UserServices = require("../../services/admin/UserService")
+require("../../util/JWT")
+
 const UserController = {
     login: async (req, res) => {
         //req.body

@@ -37,6 +37,8 @@
 import { reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
+import {ElMessage} from 'element-plus';
+
 
 const loginForm = reactive({
     username: '',
@@ -64,12 +66,15 @@ const submitForm = () => {
         if (valid) {
             //3.设置token
             localStorage.setItem('token', 'xxxxxx'); //设置token
-            axios.post("/adminapi/user/login",loginForm).then(res =>{
+              axios.post("/adminapi/user/login",loginForm).then(res =>{
                 console.log(res.data);
-                
+                if(res.data.ActionType==='ok'){
+                    router.push('/index');
+                    localStorage.setItem('token', 'hzj')
+                }else{
+                    ElMessage('用户名或密码错误')
+                }
             })
-            //4.跳转到首页
-            router.push('/index');
         }
     })
 }
