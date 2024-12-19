@@ -8,34 +8,33 @@ const UserServices = {
     }
   },
 
-  upload: async ({ _id, username, phone, introduction, gender, avatar }) => {
+  register: async ({
+    username,
+    phone,
+    introduction,
+    gender,
+    avatar,
+    password,
+    role,
+  }) => {
     try {
-      if (avatar) {
-        return UserModel.updateOne(
-          {
-            _id,
-          },
-          {
-            username,
-            introduction,
-            gender,
-            avatar,
-          }
-        );
+      const existingUser = await UserModel.findOne({ username });
+
+      if (existingUser) {
+        return false;
       } else {
-        return UserModel.updateOne(
-          {
-            _id,
-          },
-          {
-            username,
-            introduction,
-            gender,
-          }
-        );
+        return UserModel.create({
+          username,
+          phone,
+          introduction,
+          gender,
+          avatar,
+          password,
+          role,
+        });
       }
     } catch (error) {
-      console.log("userServices upload error", error);
+      console.log("userServices register error", error);
     }
   },
 };

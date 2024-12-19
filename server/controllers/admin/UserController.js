@@ -44,7 +44,7 @@ const UserController = {
       const { username, phone, introduction, gender } = req.body;
       const token = req.headers["authorization"].split(" ")[1];
       console.log("token", token);
-      const avatar = req.file?`/avataruploads/${req.file.filename}`:''
+      const avatar = req.file ? `/avataruploads/${req.file.filename}` : "";
       var payload = JWT.verify(token);
       //调用service 模块更新 数据
 
@@ -78,6 +78,39 @@ const UserController = {
       }
     } catch (error) {
       console.log("userController upload error:", error);
+    }
+  },
+
+  register: async (req, res) => {
+    try {
+      const { username, phone, introduction, gender, role, password } =
+        req.body;
+      const avatar = req.file ? `/avataruploads/${req.file.filename}` : "";
+      const result = await UserServices.register({
+        username,
+        phone,
+        introduction,
+        gender: Number(gender),
+        avatar,
+        role: Number(role),
+        password,
+      });
+
+      if (result) {
+        res.send({
+          ActionType: "ok",
+          code: 1, // 1 表示注册成功，2 表示用户名重复
+          message: "注册失败，用户名已存在",
+        });
+      } else {
+        res.send({
+          ActionType: "error",
+          code: 2, // 2: 用户名已存在
+          message: "用户名已存在",
+        });
+      }
+    } catch (error) {
+      console.log("userController register error:", error);
     }
   },
 };

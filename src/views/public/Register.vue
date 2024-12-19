@@ -13,6 +13,7 @@
                 <el-form-item label="密码" prop="password">
                     <el-input type="password" v-model="userForm.password" />
                 </el-form-item>
+
                 <el-form-item label="手机号" prop="phone">
                     <el-input type="phone" v-model="userForm.phone" />
                 </el-form-item>
@@ -40,7 +41,8 @@
 import { reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import Upload from '@/components/mainbox/Upload.vue';
-
+import upload from '@/util/upload'
+import { ElMessage } from 'element-plus';
 
 const userFormRef = ref()
 const userForm = reactive({
@@ -50,7 +52,8 @@ const userForm = reactive({
     role: 2,//1为管理员，2为编辑
     introduction: '',
     avatar: '',
-    file: null
+    file: null,
+    gender: 0,
 })
 const userFormRules = reactive({
     username: [{
@@ -67,18 +70,37 @@ const userFormRules = reactive({
         required: true,
         message: '请输入手机号',
         trigger: 'blur'
+    },{
+        pattern: /^1[3-9]\d{9}$/,
+        message: '请输入有效的手机号',
+        trigger: 'blur'
     }],
 })
 const router = useRouter();
-//表单提交函数
-const submitForm = () => {
-    userFormRef.value.validate((valid) => {
+// 表单提交函数
+const submitForm = async () => {
+    userFormRef.value.validate(async (valid) => {
         if (valid) {
-            //提交数据到后端
-            console.log('submitForm', userForm)
+            try {
+                // 提交数据到后端
+                const res = await upload('/adminapi/user/register', userForm);
+
+                // 根据后端返回的 code 值判断注册结果
+                if (res.code === 1) {
+                    ElMessage.success('注册成功');
+                    router.push(`/login`); // 注册成功后跳转到登录页
+                } else if (res.code === 2) {
+                    ElMessage.error('注册失败，用户名已存在');
+                } else {
+                    ElMessage.error(res.message || '注册失败，出现未知错误');
+                }
+            } catch (error) {
+                ElMessage.error('请求失败，请稍后再试');
+                console.error("注册请求失败：", error);
+            }
         }
-    })
-}
+    });
+};
 
 //每次选择完图片之后的回调
 const handleChange = (file) => {
@@ -158,6 +180,7 @@ const options = {
     },
     detectRetina: true
 }
+
 </script>
 <style lang="scss" scoped>
 .formContainer {

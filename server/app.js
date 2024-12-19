@@ -8,6 +8,7 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 // 引入admin的路由
 const UserRouter = require('./routes/admin/UserRouter');
+const UserEditRouter = require('./routes/admin/UserEditRouter');
 const JWT = require('./util/JWT');
 
 var app = express();
@@ -24,6 +25,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+
+
+// 注册admin的路由
+app.use(UserRouter)
 
 app.use((req, res, next) => {
   //如果token有效，next()
@@ -43,7 +48,7 @@ app.use((req, res, next) => {
       const newToken = JWT.generate({
         id: payload.id,
         username: payload.username,
-      },'10s')
+      },'30s')
       res.header('authorization',newToken)
       next()
     }else{
@@ -51,8 +56,8 @@ app.use((req, res, next) => {
     }
   }
 })
-// 注册admin的路由
-app.use(UserRouter)
+// 用户信息修改路由
+app.use(UserEditRouter)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
