@@ -1,11 +1,14 @@
 var express = require('express');
 const UserController = require('../../controllers/admin/UserController');
 var UserRouter = express.Router();
+//图片上传
+const multer = require('multer');
+const upload = multer({dest: 'public/avataruploads/'});
+
+
 /* GET home page. */
 UserRouter.post('/adminapi/user/login',UserController.login)
-UserRouter.get('/adminapi/user/adminhome',(req,res)=>{
-    res.send({ok:1})
-})
+UserRouter.post('/adminapi/user/upload',upload.single('file'),UserController.upload)
 
 
 module.exports = UserRouter;
