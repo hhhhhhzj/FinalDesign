@@ -21,6 +21,14 @@ const UserController = {
 
             res.send({
                 ActionType:'ok',
+                data: {
+                    username: result[0].username,
+                    gender: result[0].gender?result[0].gender:0,//性别，0，1，2
+                    phone: result[0].phone,
+                    introduction: result[0].introduction,
+                    avatar: result[0].avatar,
+                    role: result[0].role,
+                }
             })
         }
     }
