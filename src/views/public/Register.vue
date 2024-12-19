@@ -5,27 +5,30 @@
 
             <h3>注册账号</h3>
 
-            <el-form ref="loginFormRef" :model="loginForm" status-icon :rules="loginRules" label-width="auto"
-                class="loginform">
-
+            <el-form ref="userFormRef" style="max-width: 600px" :model="userForm" :rules="userFormRules"
+                label-width="80px" class="demo-ruleForm" status-icon>
                 <el-form-item label="用户名" prop="username">
-                    <el-input v-model="loginForm.username" autocomplete="off" />
+                    <el-input v-model="userForm.username" />
                 </el-form-item>
-
                 <el-form-item label="密码" prop="password">
-                    <el-input v-model="loginForm.password" autocomplete="off" />
+                    <el-input type="password" v-model="userForm.password" />
                 </el-form-item>
-
+                <el-form-item label="手机号" prop="phone">
+                    <el-input type="phone" v-model="userForm.phone" />
+                </el-form-item>
+                <el-form-item label="个人简介" prop="introduction">
+                    <el-input type="textarea" v-model="userForm.introduction" />
+                </el-form-item>
+                <el-form-item label="头像" prop="avatar">
+                    <Upload :avatar="userForm.avatar" @kerwinchange="handleChange" />
+                </el-form-item>
                 <el-form-item>
-
                     <el-button type="primary" @click="submitForm(ruleFormRef)">
-                        提交
+                        注册
                     </el-button>
-
-                    <el-button type="primary" @click="router.push('/login')">
-                        返回
+                    <el-button type="default" @click="router.push('/login')">
+                        返回登陆
                     </el-button>
-
                 </el-form-item>
             </el-form>
         </div>
@@ -36,14 +39,20 @@
 <script setup>
 import { reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
-const loginForm = reactive({
+import Upload from '@/components/mainbox/Upload.vue';
+
+
+const userFormRef = ref()
+const userForm = reactive({
     username: '',
     password: '',
     phone: '',
-    idNum: ''
-});//表单绑定的响应式对象 
-const loginFormRef = ref(null); //表单的引用对象
-const loginRules = reactive({
+    role: 2,//1为管理员，2为编辑
+    introduction: '',
+    avatar: '',
+    file: null
+})
+const userFormRules = reactive({
     username: [{
         required: true,
         message: '请输入用户名',
@@ -53,23 +62,30 @@ const loginRules = reactive({
         required: true,
         message: '请输入密码',
         trigger: 'blur'
-    }]
+    }],
+    phone: [{
+        required: true,
+        message: '请输入手机号',
+        trigger: 'blur'
+    }],
 })
 const router = useRouter();
 //表单提交函数
 const submitForm = () => {
-    //1.校验表单
-    loginFormRef.value.validate((valid) => {
-        console.log(valid);
+    userFormRef.value.validate((valid) => {
         if (valid) {
-            //2.拿到表单内容，提交后台
-            //3.设置token
-            localStorage.setItem('token', 'xxxxxx'); //设置token
-            //4.跳转到首页
-            router.push('/center');
+            //提交数据到后端
+            console.log('submitForm', userForm)
         }
     })
 }
+
+//每次选择完图片之后的回调
+const handleChange = (file) => {
+    userForm.avatar = URL.createObjectURL(file);
+    userForm.file = file;
+}
+
 //配置particles.js参数
 const options = {
     background: {
@@ -146,7 +162,6 @@ const options = {
 <style lang="scss" scoped>
 .formContainer {
     width: 500px;
-    height: 300px;
     position: fixed;
     left: 50%;
     top: 50%;

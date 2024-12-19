@@ -41,29 +41,43 @@ const UserController = {
 
   upload: async (req, res) => {
     try {
-        const { username, phone, introduction, gender } = req.body;
-    const token = req.headers["authorization"].split(" ")[1];
-    console.log("token", token);
-    const avatar = `/avataruploads/${req.file.filename}`;
-    var payload = JWT.verify(token);
-    console.log("payload.id", payload.id);
-    console.log(req.body, req.file);
-    //调用service 模块更新 数据
+      const { username, phone, introduction, gender } = req.body;
+      const token = req.headers["authorization"].split(" ")[1];
+      console.log("token", token);
+      const avatar = req.file?`/avataruploads/${req.file.filename}`:''
+      var payload = JWT.verify(token);
+      //调用service 模块更新 数据
 
-    await UserServices.upload({
-      _id: payload.id,
-      username,
-      introduction,
-      phone,
-      gender: Number(gender),
-      avatar,
-    });
-    res.send({
-      ActionType: "ok",
-    });
+      await UserServices.upload({
+        _id: payload.id,
+        username,
+        introduction,
+        phone,
+        gender: Number(gender),
+        avatar,
+      });
+      if (avatar) {
+        res.send({
+          ActionType: "ok",
+          data: {
+            username,
+            introduction,
+            gender: Number(gender),
+            avatar,
+          },
+        });
+      } else {
+        res.send({
+          ActionType: "ok",
+          data: {
+            username,
+            introduction,
+            gender: Number(gender),
+          },
+        });
+      }
     } catch (error) {
-        console.log("userController upload error:", error);
-        
+      console.log("userController upload error:", error);
     }
   },
 };
