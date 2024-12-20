@@ -34,5 +34,15 @@ const UserEditService = {
     }
   },
 
+  getList: async () => {
+    try {
+        
+        return UserModel.find({},['username','role','avatar','phone','introduction','gender'])
+    } catch (error) {
+        console.log("userEditServices getList error", error);
+        
+    }
+}
+
 };
 module.exports = UserEditService;

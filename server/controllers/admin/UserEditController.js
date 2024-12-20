@@ -48,5 +48,19 @@ const UserEditController = {
   },
 
 
+  getList: async (req, res) => {
+    try {
+        
+        const result = await UserEditServices.getList()
+        res.send({
+            ActionType: 'ok',
+            data: result
+        })
+    } catch (error) {
+        console.log("userEditController getList error:", error);
+        
+    }
+}
+
 };
 module.exports = UserEditController;

@@ -110,7 +110,7 @@ const handleChange = (file) => {
 const submitForm = () => {
     userFormRef.value.validate(async (valid) => {
         if (valid) {
-            const res = await upload('/adminapi/user/upload', userForm)
+            const res = await upload('/adminapi/userEdit/upload', userForm)
                 .then(res => {
                     console.log(res.data);
                     if (res.ActionType === 'ok') {
