@@ -42,6 +42,16 @@ const UserEditService = {
         console.log("userEditServices getList error", error);
         
     }
+},
+
+delList: async ({_id}) => {
+    try {
+        return UserModel.deleteOne({_id})
+        
+    } catch (error) {
+        console.log("userEditServices delList error", error);
+        
+    }
 }
 
 };

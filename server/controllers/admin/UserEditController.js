@@ -60,6 +60,19 @@ const UserEditController = {
         console.log("userEditController getList error:", error);
         
     }
+},
+
+delList: async (req, res) => {
+    try {
+        
+        const result = await UserEditServices.delList({_id:req.params.id})
+        res.send({
+            ActionType: 'ok',
+        })
+    } catch (error) {
+        console.log("userEditController delList error:", error);
+        
+    }
 }
 
 };

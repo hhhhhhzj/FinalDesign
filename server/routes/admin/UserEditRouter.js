@@ -9,5 +9,6 @@ const upload = multer({dest: 'public/avataruploads/'});
 /* GET home page. */
 UserEditRouter.post('/adminapi/userEdit/upload',upload.single('file'),UserEditController.upload)
 UserEditRouter.get('/adminapi/userEdit/getList',UserEditController.getList)
+UserEditRouter.delete('/adminapi/userEdit/List/:id',UserEditController.delList)
 
 module.exports = UserEditRouter;
