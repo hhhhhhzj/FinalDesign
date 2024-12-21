@@ -1,11 +1,10 @@
-<template>
-    <div>
-        <h1>Home</h1>
-    </div>
+<template>  
+  <Nav/>
 </template>
 
-<script setup>
 
+<script setup>
+import Nav from '@/components/web/Nav.vue'
 </script>
 
 <style lang="scss" scoped>

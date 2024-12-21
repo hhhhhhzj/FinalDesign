@@ -34,6 +34,7 @@
                 </template>
                     <el-menu-item index="/house-manage/addhouse">添加房源</el-menu-item>
                     <el-menu-item index="/house-manage/houselist">房源列表</el-menu-item>
+                    
             </el-sub-menu>
         </el-menu>
     </el-aside>

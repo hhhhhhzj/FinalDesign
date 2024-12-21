@@ -71,7 +71,7 @@ const submitForm = () => {
                 console.log(res.data);
                 if(res.data.ActionType==='ok'){
                     store.commit('changeUserInfo',res.data.data)
-                    router.push('/index');
+                    router.push('/home');
                 }else{
                     ElMessage.error('用户名或密码错误')
                 }
