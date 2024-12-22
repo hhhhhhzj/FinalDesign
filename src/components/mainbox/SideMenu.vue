@@ -11,10 +11,6 @@
                 <el-icon><HomeFilled /></el-icon>
                 <span>首页</span>
             </el-menu-item>
-            <el-menu-item index="/center">
-                <el-icon><Avatar /></el-icon>
-                <span>个人中心</span>
-            </el-menu-item>
             <el-sub-menu index="/user-manage">
                 <template #title>
                     <el-icon>

@@ -17,6 +17,12 @@
                 <el-form-item label="手机号" prop="phone">
                     <el-input type="phone" v-model="userForm.phone" />
                 </el-form-item>
+                <el-form-item label="性别" prop="gender">
+                        <el-select v-model="userForm.gender" placeholder="Select" style="width: 100%">
+                            <el-option v-for="item in genderOptions" :key="item.value" :label="item.label"
+                                :value="item.value" />
+                        </el-select>
+                    </el-form-item>
                 <el-form-item label="个人简介" prop="introduction">
                     <el-input type="textarea" v-model="userForm.introduction" />
                 </el-form-item>
@@ -76,6 +82,20 @@ const userFormRules = reactive({
         trigger: 'blur'
     }],
 })
+const genderOptions = [
+    {
+        value: 0,
+        label: '保密',
+    },
+    {
+        value: 1,
+        label: '男',
+    },
+    {
+        value: 2,
+        label: '女',
+    },
+]
 const router = useRouter();
 // 表单提交函数
 const submitForm = async () => {
