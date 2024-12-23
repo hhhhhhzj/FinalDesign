@@ -1,4 +1,5 @@
 import axios from 'axios';
+import createStore from '@/store/index'
 // Add a request interceptor
 axios.interceptors.request.use(function (config) {
     // Do something before request is sent
@@ -23,8 +24,12 @@ axios.interceptors.response.use(function (response) {
     // Do something with response error
     const {status} = error.response;
     if (status === 401) {
+
+        console.log('axios',createStore);
+        
         localStorage.removeItem('token');
-        window.location.href = '/login';
+        createStore.commit('clearUserInfo')
+        window.location.href = '/home';
     }
     return Promise.reject(error);
   });
