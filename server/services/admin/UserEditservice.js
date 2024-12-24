@@ -1,6 +1,5 @@
 const UserModel = require("../../models/UserModel");
 const UserEditService = {
-
   upload: async ({ _id, username, phone, introduction, gender, avatar }) => {
     try {
       if (avatar) {
@@ -36,23 +35,25 @@ const UserEditService = {
 
   getList: async () => {
     try {
-        
-        return UserModel.find({},['username','role','avatar','phone','introduction','gender'])
+      return UserModel.find({}, [
+        "username",
+        "role",
+        "avatar",
+        "phone",
+        "introduction",
+        "gender",
+      ]);
     } catch (error) {
-        console.log("userEditServices getList error", error);
-        
+      console.log("userEditServices getList error", error);
     }
-},
+  },
 
-delList: async ({_id}) => {
+  delList: async ({ _id }) => {
     try {
-        return UserModel.deleteOne({_id})
-        
+      return UserModel.deleteOne({ _id });
     } catch (error) {
-        console.log("userEditServices delList error", error);
-        
+      console.log("userEditServices delList error", error);
     }
-}
-
+  },
 };
 module.exports = UserEditService;

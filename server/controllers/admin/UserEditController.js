@@ -20,28 +20,33 @@ const UserEditController = {
         gender: Number(gender),
         avatar,
       });
-      if (avatar) {
-        res.send({
-          ActionType: "ok",
-          data: {
-            username,
-            phone,
-            introduction,
-            gender: Number(gender),
-            avatar,
-          },
-        });
-      } else {
-        res.send({
-          ActionType: "ok",
-          data: {
-            username,
-            phone,
-            introduction,
-            gender: Number(gender),
-          },
-        });
-      }
+
+
+        if (avatar) {
+          res.send({
+            ActionType: "ok",
+            code: 1, // 1 表示修改成功，2 表示用户名重复
+            data: {
+              username,
+              phone,
+              introduction,
+              gender: Number(gender),
+              avatar,
+            },
+          });
+        } else {
+          res.send({
+            ActionType: "ok",
+            code: 1, // 1 表示修改成功，2 表示用户名重复
+            data: {
+              username,
+              phone,
+              introduction,
+              gender: Number(gender),
+            },
+          });
+        }
+
     } catch (error) {
       console.log("userEditController upload error:", error);
     }

@@ -24,9 +24,6 @@ axios.interceptors.response.use(function (response) {
     // Do something with response error
     const {status} = error.response;
     if (status === 401) {
-
-        console.log('axios',createStore);
-        
         localStorage.removeItem('token');
         createStore.commit('clearUserInfo')
         window.location.href = '/home';

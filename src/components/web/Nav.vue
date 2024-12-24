@@ -5,7 +5,7 @@
             <img style="width: 40px" src="../../assets/寄居蟹.png" alt="Element logo" />
             <span class="title">寄居蟹二手房</span>
         </el-menu-item>
-        <el-menu-item index="/index">后台系统</el-menu-item>
+        <el-menu-item index="/index" v-admin>后台系统</el-menu-item>
         
         <el-menu-item index="/favorites">收藏夹</el-menu-item>
         <el-menu-item index="/profile">个人中心</el-menu-item>
@@ -49,6 +49,14 @@ const store = useStore()
 const avatarUrl = computed(
     () => store.state.userInfo.avatar ? 'http://localhost:3000' + store.state.userInfo.avatar : 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png'
 )
+const vAdmin = {
+    mounted(el){
+        console.log(el);
+        if(store.state.userInfo.role!==1){
+            el.parentNode.removeChild(el)
+        }
+    }
+}
 
 const handleExit = () => {
     localStorage.removeItem('token')

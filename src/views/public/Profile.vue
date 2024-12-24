@@ -18,7 +18,7 @@
                 <el-form ref="userFormRef" style="max-width: 600px" :model="userForm" :rules="userFormRules"
                     label-width="auto" class="demo-ruleForm" status-icon>
                     <el-form-item label="用户名" prop="username">
-                        <el-input v-model="userForm.username" />
+                        <el-input v-model="userForm.username" disabled/>
                     </el-form-item>
                     <el-form-item label="电话号码" prop="phone">
                         <el-input v-model="userForm.phone" />
@@ -71,9 +71,7 @@ const userForm = reactive({
     file: null,
 })
 const userFormRules = reactive({
-    username: [
-        { required: true, message: '请输入名字', trigger: 'blur' },
-    ],
+
     phone: [
         { required: true, message: '请输入电话号码', trigger: 'blur' },{
         pattern: /^1[3-9]\d{9}$/,
@@ -117,7 +115,6 @@ const submitForm = () => {
         if (valid) {
             const res = await upload('/adminapi/userEdit/upload', userForm)
                 .then(res => {
-                    console.log(res.data);
                     if (res.ActionType === 'ok') {
                         store.commit('changeUserInfo', res.data)
                         ElMessage.success('更新成功')
