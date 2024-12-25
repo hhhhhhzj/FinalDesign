@@ -8,6 +8,7 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 // 引入admin的路由
 const UserRouter = require('./routes/admin/UserRouter');
+const HouseRouter = require('./routes/admin/HouseRouter');
 const UserEditRouter = require('./routes/admin/UserEditRouter');
 const JWT = require('./util/JWT');
 
@@ -47,7 +48,7 @@ app.use((req, res, next) => {
       const newToken = JWT.generate({
         id: payload.id,
         username: payload.username,
-      },'200s')
+      },'1h')
       res.header('authorization',newToken)
       next()
     }else{
@@ -57,6 +58,7 @@ app.use((req, res, next) => {
 })
 // 用户信息修改路由
 app.use(UserEditRouter)
+app.use(HouseRouter)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

@@ -7,6 +7,7 @@
         </el-icon>
     </el-upload>
 </template>
+
 <script setup>
 import {defineEmits, defineProps, computed} from 'vue'; 
 import {Plus} from '@element-plus/icons-vue';

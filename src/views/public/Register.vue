@@ -104,7 +104,7 @@ const submitForm = async () => {
             try {
                 // 提交数据到后端
                 const res = await upload('/adminapi/user/register', userForm);
-
+                
                 // 根据后端返回的 code 值判断注册结果
                 if (res.code === 1) {
                     ElMessage.success('注册成功');

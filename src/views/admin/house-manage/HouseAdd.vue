@@ -1,8 +1,8 @@
 <template>
     <div>
         <el-page-header content="添加房源" icon="" title="房源管理" />
-        <el-form ref="houseFormRef" style="max-width: 800px" :model="houseForm" :rules="houseFormRules" label-width="80px"
-            class="demo-ruleForm" status-icon>
+        <el-form ref="houseFormRef" style="max-width: 800px" :model="houseForm" :rules="houseFormRules"
+            label-width="80px" class="demo-ruleForm" status-icon>
             <el-form-item label="标题" prop="title">
                 <el-input v-model="houseForm.title" />
             </el-form-item>
@@ -55,9 +55,14 @@
                 <el-input type="textarea" v-model="houseForm.ownerMood" />
             </el-form-item>
 
-            <el-form-item label="户型图" prop="floorPlan">
-                <Upload :avatar="houseForm.floorPlan" @kerwinchange="handleUploadChange" />
+            <!-- <el-form-item label="户型图" prop="floorPlan">
+                <Upload :avatar="houseForm.floorPlan" @kerwinchange="handleFoolrPlanUploadChange" />
+            </el-form-item> -->
+
+            <el-form-item label="室内图片" prop="houseImg">
+                <MultiUpload v-model="houseForm.houseImg" :max-count="5" />
             </el-form-item>
+
             <el-form-item>
                 <el-button type="primary" @click="submitForm(ruleFormRef)">
                     添加房源
@@ -68,8 +73,14 @@
 </template>
 <script setup>
 import { ref, reactive } from 'vue'
-import Upload from '@/components/mainbox/Upload.vue'
+// import Upload from '@/components/mainbox/Upload.vue'
+// import Uploads from '@/components/mainbox/Uploads.vue'
+import { Plus } from '@element-plus/icons-vue'
+import MultiUpload from '@/components/mainbox/MultiUpload.vue';
+import { ElMessage } from 'element-plus';
+import axios from 'axios'
 
+// --------------------------------
 const houseFormRef = ref()
 const houseForm = reactive({
     title: '',
@@ -89,9 +100,7 @@ const houseForm = reactive({
     address: '',
     sellPoint: '',
     ownerMood: '',
-    floorPlan: '',
-    floorPlanFile: null,
-    houseImg: '',
+    houseImg: [],
 })
 const houseFormRules = reactive({
     title: [{ required: true, message: '请输入标题', trigger: 'blur' }],
@@ -137,18 +146,40 @@ const houseFormRules = reactive({
     ownerMood: [{ required: true, message: '请输入业主心态', trigger: 'blur' }],
 })
 
-const handleUploadChange = (file) => {
-    houseForm.cover = URL.createObjectURL(file);
-    houseForm.file = file;
-}
-const submitForm = () => {
-    houseFormRef.value.validate((valid) => {
+const submitForm = async () => {
+    houseFormRef.value.validate(async (valid) => {
         if (valid) {
-            console.log('submitForm', houseForm);
-        }
-    })
-}
+            const formData = new FormData();
+            // 普通字段
+            Object.keys(houseForm).forEach((key) => {
+                if (key !== 'houseImg') {
+                    formData.append(key, houseForm[key]);
+                }
+            });
 
+            // 上传图片
+            houseForm.houseImg.forEach((file) => {
+                formData.append('houseImg', file.raw);
+            });
+
+            try {
+                const res = await axios.post('/adminapi/house/add', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                });
+                if (res.data.ActionType === 'ok') {
+                    ElMessage.success('房源添加成功');
+                } else {
+                    ElMessage.error(res.data.message || '房源添加失败');
+                }
+            } catch (error) {
+                ElMessage.error('提交失败，请稍后再试');
+                console.error('提交失败:', error);
+            }
+        }
+    });
+};
 
 const props = {
     expandTrigger: 'hover',
@@ -304,7 +335,7 @@ const decorationOptions = [
         value: '豪华装修',
         label: '豪华装修',
     },
-]  
+]
 const subwayOptions = [
     {
         value: '1号线',
