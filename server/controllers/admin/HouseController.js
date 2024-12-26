@@ -16,6 +16,20 @@ const HouseController = {
             res.status(500).send({ ActionType: 'error', message: '房源添加失败' });
         }
     },
+
+    getList: async (req, res) => {
+        try {
+            
+            const result = await HouseServices.getList()
+            res.send({
+                ActionType: 'ok',
+                data: result
+            })
+        } catch (error) {
+            console.log('获取房源列表失败:', error);
+            res.status(500).send({ ActionType: 'error', message: '获取房源列表失败' });
+        }
+    }
 };
 
 module.exports = HouseController;

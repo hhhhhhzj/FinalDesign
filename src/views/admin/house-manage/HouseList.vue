@@ -1,13 +1,254 @@
 <template>
-    <div>
-        <h1>房源列表</h1>
-    </div>
+    <el-table
+        :data="filterTableData"
+        style="width: 100%"
+        border
+        row-key="_id"
+        :default-sort="{ prop: 'createdAt', order: 'descending' }"
+    >
+        <!-- 时间列 -->
+        <el-table-column
+            label="时间"
+            width="150"
+            prop="createdAt"
+            sortable
+            :sort-method="sortByDate"
+        >
+            <template #default="scope">
+                {{ moment(scope.row.createdAt).utcOffset(8).format('YYYY-MM-DD') }}
+            </template>
+        </el-table-column>
+
+        <!-- 标题列 -->
+        <el-table-column label="标题" prop="title"/>
+
+        <!-- 价格列 -->
+        <el-table-column
+            label="价格"
+            prop="price"
+            column-key="price"
+            :filters="[
+                { text: '0-50万', value: { min: 0, max: 50 } },
+                { text: '50-100万', value: { min: 50, max: 100 } },
+                { text: '100-200万', value: { min: 100, max: 200 } },
+                { text: '200-500万', value: { min: 200, max: 500 } },
+                { text: '大于500万', value: { min: 500, max: Infinity } }
+            ]"
+            :filter-method="filterByPrice"
+            filter-placement="bottom-end"
+        >
+            <template #default="scope">
+                {{ scope.row.price }} 万
+            </template>
+        </el-table-column>
+
+        <!-- 地区列 -->
+        <el-table-column
+            label="地区"
+            prop="address"
+            column-key="address"
+            :filters="[
+                { text: '武侯区', value: '武侯' },
+                { text: '金牛区', value: '金牛' },
+                { text: '成华区', value: '成华' },
+                { text: '龙泉驿区', value: '龙泉驿' },
+                { text: '新都区', value: '新都' },
+                { text: '双流区', value: '双流' },
+                { text: '郫都区', value: '郫都' },
+                { text: '大邑县', value: '大邑' },
+                { text: '新津县', value: '新津' },
+                { text: '邛崃市', value: '邛崃' },
+                { text: '崇州市', value: '崇州' },
+                { text: '简阳市', value: '简阳' },
+                { text: '高新区', value: '高新' }
+            ]"
+            :filter-method="filterByAddress"
+            filter-placement="bottom-end"
+        />
+
+        <!-- 朝向列 -->
+        <el-table-column
+            label="朝向"
+            prop="orientation"
+            column-key="orientation"
+            :filters="[
+                { text: '东', value: '东' },
+                { text: '南', value: '南' },
+                { text: '西', value: '西' },
+                { text: '北', value: '北' },
+                { text: '东南', value: '东南' },
+                { text: '西南', value: '西南' },
+                { text: '东北', value: '东北' },
+                { text: '西北', value: '西北' }
+            ]"
+            :filter-method="filterByOrientation"
+            filter-placement="bottom-end"
+        />
+
+        <!-- 客厅列 -->
+        <el-table-column
+            label="客厅"
+            prop="hallNum"
+            column-key="hallNum"
+            :filters="[
+                { text: '1', value: 1 },
+                { text: '2', value: 2 },
+                { text: '3', value: 3 },
+                { text: '4', value: 4 },
+                { text: '其他（大于 4）', value: 'other' }
+            ]"
+            :filter-method="filterByNumber('hallNum')"
+            filter-placement="bottom-end"
+        />
+
+        <!-- 卧室列 -->
+        <el-table-column
+            label="卧室"
+            prop="roomNum"
+            column-key="roomNum"
+            :filters="[
+                { text: '1', value: 1 },
+                { text: '2', value: 2 },
+                { text: '3', value: 3 },
+                { text: '4', value: 4 },
+                { text: '其他（大于 4）', value: 'other' }
+            ]"
+            :filter-method="filterByNumber('roomNum')"
+            filter-placement="bottom-end"
+        />
+
+        <!-- 卫生间列 -->
+        <el-table-column
+            label="卫生间"
+            prop="toiletNum"
+            column-key="toiletNum"
+            :filters="[
+                { text: '1', value: 1 },
+                { text: '2', value: 2 },
+                { text: '3', value: 3 },
+                { text: '4', value: 4 },
+                { text: '其他（大于 4）', value: 'other' }
+            ]"
+            :filter-method="filterByNumber('toiletNum')"
+            filter-placement="bottom-end"
+        />
+
+        <!-- 分类列 -->
+        <el-table-column
+            label="分类"
+            prop="propertyType"
+            column-key="propertyType"
+            :filters="[
+                { text: '公寓', value: '公寓' },
+                { text: '别墅', value: '别墅' },
+                { text: '普通住宅', value: '普通住宅' },
+                { text: '平房', value: '平房' },
+                { text: '其他', value: '其他' }
+            ]"
+            :filter-method="filterByPropertyType"
+            filter-placement="bottom-end"
+        />
+
+        <!-- 操作列 -->
+        <el-table-column align="right" width="150">
+            <template #header>
+                <el-input v-model="search" size="small" placeholder="Type to search" />
+            </template>
+            <template #default="scope">
+                <el-button size="small" @click="handleEdit(scope.$index, scope.row)">
+                    修改
+                </el-button>
+                <el-button size="small" type="danger" @click="handleDelete(scope.$index, scope.row)">
+                    删除
+                </el-button>
+            </template>
+        </el-table-column>
+    </el-table>
 </template>
 
 <script setup>
+import { ref, computed, onMounted } from 'vue'
+import axios from 'axios'
+import moment from 'moment'
 
+// 表格数据
+const tableData = ref([])
+
+// 搜索关键字
+const search = ref('')
+
+// 自定义排序方法
+const sortByDate = (a, b) => {
+    const dateA = new Date(a.createdAt).getTime()
+    const dateB = new Date(b.createdAt).getTime()
+    return dateA - dateB // 升序排序
+}
+
+// 自定义过滤方法
+const filterByAddress = (value, row) => row.address === value
+const filterByOrientation = (value, row) => row.orientation === value
+const filterByPropertyType = (value, row) => row.propertyType === value
+
+const filterByNumber = (key) => {
+    return (value, row) => {
+        if (value === 'other') {
+            return row[key] > 4
+        }
+        return row[key] === value
+    }
+}
+
+// 价格过滤
+const filterByPrice = (value, row) => {
+    const price = row.price
+    return price >= value.min && price < value.max
+}
+
+// 修改搜索功能：搜索表单显示的所有字段
+const filterTableData = computed(() => {
+    return tableData.value.filter((data) => {
+        // 将表单中显示的字段拼接成一个字符串，然后匹配搜索关键词
+        const searchableString = `
+            ${data.title || ''}
+            ${data.price || ''}
+            ${data.area || ''}
+            ${data.decoration || ''}
+            ${data.address || ''}
+            ${data.community || ''}
+            ${data.orientation || ''}
+            ${data.hallNum || ''}
+            ${data.roomNum || ''}
+            ${data.toiletNum || ''}
+            ${data.propertyType || ''}
+            ${data.subway || ''}
+        `.toLowerCase()
+
+        return !search.value || searchableString.includes(search.value.toLowerCase())
+    })
+})
+
+// 编辑操作
+const handleEdit = (index, row) => {
+    console.log('编辑:', index, row)
+}
+
+// 删除操作
+const handleDelete = (index, row) => {
+    console.log('删除:', index, row)
+}
+
+// 获取表格数据
+const getTableData = async () => {
+    try {
+        const res = await axios.get(`/adminapi/house/list`)
+        tableData.value = res.data.data
+    } catch (error) {
+        console.error('获取表格数据失败:', error)
+    }
+}
+
+// 页面加载时获取数据
+onMounted(() => {
+    getTableData()
+})
 </script>
-
-<style lang="scss" scoped>
-
-</style>

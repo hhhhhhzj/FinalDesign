@@ -338,6 +338,10 @@ const decorationOptions = [
 ]
 const subwayOptions = [
     {
+        value: '无',
+        label: '无',
+    },
+    {
         value: '1号线',
         label: '1号线',
     },
