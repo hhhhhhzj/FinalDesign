@@ -7,26 +7,40 @@ const HouseService = {
 
     getList: async () => {
         try {
-            
-            return HouseModel.find({})
+            return HouseModel.find({});
         } catch (error) {
             console.log('houseService.getList error: ', error);
-            
         }
     },
 
-    publish: async ({_id,isPublish})=> {
+    getById: async (id) => {
         try {
-            return HouseModel.updateOne({
-               _id
-            },{
-               isPublish,
-            })
+            return await HouseModel.findById(id);
+        } catch (error) {
+            console.log('houseService.getById error: ', error);
+        }
+    },
+
+    publish: async ({ _id, isPublish }) => {
+        try {
+            return HouseModel.updateOne(
+                {
+                    _id,
+                },
+                {
+                    isPublish,
+                }
+            );
         } catch (error) {
             console.log('houseService.publish error: ', error);
-            
         }
-   }
+    },
+
+    delList: async ({ _id }) => {
+        return HouseModel.deleteOne({
+            _id,
+        });
+    },
 };
 
 module.exports = HouseService;
