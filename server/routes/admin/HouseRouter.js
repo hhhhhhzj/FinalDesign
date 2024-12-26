@@ -7,5 +7,7 @@ const HouseRouter = express.Router();
 
 HouseRouter.post('/adminapi/house/add', upload.array('houseImg', 5), HouseController.add);
 HouseRouter.get('/adminapi/house/list', HouseController.getList)
+HouseRouter.put('/adminapi/house/publish', HouseController.publish)
+
 
 module.exports = HouseRouter;
