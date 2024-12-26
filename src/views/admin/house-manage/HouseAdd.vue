@@ -34,7 +34,7 @@
                 <el-cascader v-model="houseForm.orientation" :options="orientationOptions" :props="props" />
             </el-form-item>
             <el-form-item label="楼层" prop="floor">
-                <el-cascader v-model="houseForm.floor" :options="floorOptions" :props="props" />
+                <el-input-number v-model="houseForm.floor" :min="1" placeholder="请输入楼层" style="width: 100%;" />
             </el-form-item>
             <el-form-item label="物业类型" prop="propertyType">
                 <el-cascader v-model="houseForm.propertyType" :options="propertyTypeOptions" :props="props" />
@@ -89,7 +89,7 @@ const houseForm = reactive({
     decoration: '',
     buildTime: '',
     orientation: '',
-    floor: '',
+    floor: 1, // 修改为数值类型，默认值设置为 1
     subway: '',
     perSquarePrice: 0,
     roomNum: '',
@@ -101,7 +101,7 @@ const houseForm = reactive({
     sellPoint: '',
     ownerMood: '',
     houseImg: [],
-})
+});
 const houseFormRules = reactive({
     title: [{ required: true, message: '请输入标题', trigger: 'blur' }],
     price: [{ required: true, message: '请输入价格', trigger: 'blur' }, {
@@ -114,7 +114,15 @@ const houseFormRules = reactive({
     orientation: [{ required: true, message: '请选择朝向', trigger: 'blur' }],
     propertyType: [{ required: true, message: '请选择物业类型', trigger: 'blur' }],
     subway: [{ required: true, message: '请选择地铁', trigger: 'blur' }],
-    floor: [{ required: true, message: '请选择楼层', trigger: 'blur' }],
+    floor: [
+        { required: true, message: '请输入楼层', trigger: 'blur' },
+        {
+            type: 'number',
+            min: 1,
+            message: '楼层必须是大于 0 的正整数',
+            trigger: 'blur',
+        },
+    ],
     area: [{ required: true, message: '请输入面积', trigger: 'blur' }, {
         pattern: /^[0-9]+(\.[0-9]{1,2})?$/, // 匹配整数或最多两位小数的数字
         message: '请输入有效的价格（数字）',
@@ -150,18 +158,14 @@ const submitForm = async () => {
     houseFormRef.value.validate(async (valid) => {
         if (valid) {
             const formData = new FormData();
-            // 普通字段
             Object.keys(houseForm).forEach((key) => {
                 if (key !== 'houseImg') {
                     formData.append(key, houseForm[key]);
                 }
             });
-
-            // 上传图片
             houseForm.houseImg.forEach((file) => {
                 formData.append('houseImg', file.raw);
             });
-
             try {
                 const res = await axios.post('/adminapi/house/add', formData, {
                     headers: {

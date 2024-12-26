@@ -8,7 +8,7 @@ const HouseSchema = new Schema({
     decoration: String,
     buildTime: String,
     orientation: String,
-    floor: String,
+    floor: Number,
     subway: String,
     perSquarePrice: Number,
     roomNum: Number,
