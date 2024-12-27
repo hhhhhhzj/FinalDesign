@@ -20,6 +20,11 @@ const routes = [
         requireAdmin: true
     },
     {
+        path: '/house-manage/edithouse/:id',
+        component: () => import('@/views/admin/house-manage/HouseEdit.vue'),
+        requireAdmin: true
+    },
+    {
         path: '/',
         redirect: '/index',
         requireAdmin: true

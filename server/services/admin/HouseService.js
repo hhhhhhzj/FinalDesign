@@ -5,9 +5,9 @@ const HouseService = {
         return await HouseModel.create(data);
     },
 
-    getList: async () => {
+    getList: async ({_id}) => {
         try {
-            return HouseModel.find({});
+            return _id? HouseModel.find({_id}) : HouseModel.find({})
         } catch (error) {
             console.log('houseService.getList error: ', error);
         }

@@ -50,7 +50,7 @@
 </template>
 <script setup>
 import { useStore } from 'vuex'
-import { computed, ref, reactive } from 'vue';
+import { computed, ref, reactive, onMounted } from 'vue';
 import Upload from '@/components/mainbox/Upload.vue';
 import { ElMessage } from 'element-plus';
 import upload from '@/util/upload';
@@ -123,6 +123,7 @@ const submitForm = () => {
         }
     })
 }
+
 </script>
 <style lang="scss" scoped>
 .container{

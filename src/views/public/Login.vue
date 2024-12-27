@@ -63,7 +63,6 @@ const router = useRouter();
 const submitForm = () => {
     //1.校验表单
     loginFormRef.value.validate((valid) => {
-        console.log(valid);
         if (valid) {
             //3.设置token
             localStorage.setItem('token', 'xxxxxx'); //设置token
@@ -71,6 +70,7 @@ const submitForm = () => {
                 console.log(res.data);
                 if(res.data.ActionType==='ok'){
                     store.commit('changeUserInfo',res.data.data)
+                    console.log('登陆页面:用户信息',store.state.userInfo)
                     router.push('/home');
                 }else{
                     ElMessage.error('用户名或密码错误')

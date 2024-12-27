@@ -105,7 +105,7 @@
                 <el-input v-model="search" size="small" placeholder="Type to search" />
             </template>
             <template #default="scope">
-                <el-button size="small" @click="handleEdit(scope.$index, scope.row)">
+                <el-button size="small" @click="handleEdit(scope.row)">
                     修改
                 </el-button>
                 <el-popconfirm 
@@ -128,10 +128,11 @@
 import { ref, computed, onMounted } from 'vue'
 import axios from 'axios'
 import moment from 'moment'
+import {useRouter} from 'vue-router'
 
 // 表格数据
 const tableData = ref([])
-
+const router = useRouter()
 // 搜索关键字
 const search = ref('')
 
@@ -189,8 +190,9 @@ const filterTableData = computed(() => {
 })
 
 // 编辑操作
-const handleEdit = (index, row) => {
-    console.log('编辑:', index, row)
+const handleEdit = (item) => {
+    console.log(item);
+    router.push(`/house-manage/edithouse/${item._id}`)
 }
 
 //删除回调

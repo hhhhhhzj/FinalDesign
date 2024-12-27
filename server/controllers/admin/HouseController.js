@@ -6,6 +6,10 @@ const HouseController = {
     add: async (req, res) => {
         try {
             const houseImgPaths = req.files.map((file) => `/houseuploads/${file.filename}`);
+            console.log('houseImgPaths:', houseImgPaths);
+            console.log('req', req.files);
+            
+            
             const houseData = { ...req.body, houseImg: houseImgPaths };
             const result = await HouseService.add(houseData);
 
@@ -22,7 +26,7 @@ const HouseController = {
     getList: async (req, res) => {
         try {
             
-            const result = await HouseService.getList()
+            const result = await HouseService.getList({ _id: req.params.id })
             res.send({
                 ActionType: 'ok',
                 data: result

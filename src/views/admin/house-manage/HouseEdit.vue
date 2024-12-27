@@ -1,8 +1,15 @@
 <template>
     <div>
-        <el-page-header content="添加房源" icon="" title="房源管理" />
-        <el-form ref="houseFormRef" style="max-width: 800px" :model="houseForm" :rules="houseFormRules"
-            label-width="80px" class="demo-ruleForm" status-icon>
+        <el-page-header content="编辑房源" icon="" title="房源管理" />
+        <el-form
+            ref="houseFormRef"
+            style="max-width: 800px"
+            :model="houseForm"
+            :rules="houseFormRules"
+            label-width="80px"
+            class="demo-ruleForm"
+            status-icon
+        >
             <el-form-item label="标题" prop="title">
                 <el-input v-model="houseForm.title" />
             </el-form-item>
@@ -55,146 +62,154 @@
                 <el-input type="textarea" v-model="houseForm.ownerMood" />
             </el-form-item>
 
-            <!-- <el-form-item label="户型图" prop="floorPlan">
-                <Upload :avatar="houseForm.floorPlan" @kerwinchange="handleFoolrPlanUploadChange" />
-            </el-form-item> -->
-
+            <!-- 已上传图片 -->
             <el-form-item label="室内图片" prop="houseImg">
+                <div class="image-preview">
+                    <div
+                        v-for="(img, index) in existingImages"
+                        :key="index"
+                        class="image-item"
+                    >
+                        <el-image
+                            :src="`http://localhost:3000${img}`"
+                            style="width: 100px; height: 100px"
+                        />
+                        <div class="image-overlay" @click="handleRemoveImage(img, index)">
+                            <el-icon>
+                                <DeleteFilled style="color: white; font-size: 20px;" />
+                            </el-icon>
+                        </div>
+                    </div>
+                </div>
+            </el-form-item>
+
+            <!-- 新增图片上传 -->
+            <el-form-item label="新增图片" prop="houseImg">
                 <MultiUpload v-model="houseForm.houseImg" :max-count="5" />
             </el-form-item>
 
             <el-form-item>
-                <el-button type="primary" @click="submitForm(ruleFormRef)">
-                    添加房源
-                </el-button>
+                <el-button type="primary" @click="submitForm(houseFormRef)">更新房源</el-button>
             </el-form-item>
         </el-form>
     </div>
 </template>
-<script setup>
-import { ref, reactive } from 'vue'
-// import Upload from '@/components/mainbox/Upload.vue'
-// import Uploads from '@/components/mainbox/Uploads.vue'
-import { Plus } from '@element-plus/icons-vue'
-import MultiUpload from '@/components/mainbox/MultiUpload.vue';
-import { ElMessage } from 'element-plus';
-import axios from 'axios'
-import { useRouter,useRoute } from 'vue-router';
 
-// --------------------------------
-const router = useRouter()
-const route = useRoute()
-const houseFormRef = ref()
+<script setup>
+import { ref, reactive, onMounted } from "vue";
+import MultiUpload from "@/components/mainbox/MultiUpload.vue";
+import { ElMessage } from "element-plus";
+import axios from "axios";
+import { useRoute } from "vue-router";
+import { DeleteFilled } from "@element-plus/icons-vue";
+
+const route = useRoute();
+const houseFormRef = ref();
 const houseForm = reactive({
-    title: '1',
+    title: "",
     price: 0,
     area: 0,
-    decoration: '精装修',
-    buildTime: '',
-    orientation: '北',
-    floor: 1, // 修改为数值类型，默认值设置为 1
-    subway: '1号线',
+    decoration: "",
+    buildTime: "",
+    orientation: "",
+    floor: 1,
+    subway: "1",
     perSquarePrice: 0,
-    roomNum: '2',
-    hallNum: '1',
-    toiletNum: '3',
-    propertyType: '其他',
-    community: '1',
-    address: '武侯',
-    sellPoint: '1',
-    ownerMood: '2',
+    roomNum: "",
+    hallNum: "",
+    toiletNum: "",
+    propertyType: "",
+    community: "",
+    address: "",
+    sellPoint: "",
+    ownerMood: "",
     houseImg: [],
 });
+
+// 已存在的图片列表
+const existingImages = ref([]);
+const deletedImages = ref([]);
+
 const houseFormRules = reactive({
-    title: [{ required: true, message: '请输入标题', trigger: 'blur' }],
-    price: [{ required: true, message: '请输入价格', trigger: 'blur' }, {
-        pattern: /^[0-9]+(\.[0-9]{1,2})?$/, // 匹配整数或最多两位小数的数字
-        message: '请输入有效的价格（数字）',
-        trigger: 'blur'
-    }],
-    buildTime: [{ required: true, message: '请选择建筑时间', trigger: 'blur' }],
-    decoration: [{ required: true, message: '请选择装修类型', trigger: 'blur' }],
-    orientation: [{ required: true, message: '请选择朝向', trigger: 'blur' }],
-    propertyType: [{ required: true, message: '请选择物业类型', trigger: 'blur' }],
-    subway: [{ required: true, message: '请选择地铁', trigger: 'blur' }],
-    floor: [
-        { required: true, message: '请输入楼层', trigger: 'blur' },
+    title: [{ required: true, message: "请输入标题", trigger: "blur" }],
+    price: [
+        { required: true, message: "请输入价格", trigger: "blur" },
         {
-            type: 'number',
-            min: 1,
-            message: '楼层必须是大于 0 的正整数',
-            trigger: 'blur',
+            pattern: /^[0-9]+(\.[0-9]{1,2})?$/,
+            message: "请输入有效的价格（数字）",
+            trigger: "blur",
         },
     ],
-    area: [{ required: true, message: '请输入面积', trigger: 'blur' }, {
-        pattern: /^[0-9]+(\.[0-9]{1,2})?$/, // 匹配整数或最多两位小数的数字
-        message: '请输入有效的价格（数字）',
-        trigger: 'blur'
-    }],
-    perSquarePrice: [{ required: true, message: '请输入每平方价格', trigger: 'blur' }, {
-        pattern: /^[0-9]+(\.[0-9]{1,2})?$/, // 匹配整数或最多两位小数的数字
-        message: '请输入有效的价格（数字）',
-        trigger: 'blur'
-    }],
-    roomNum: [{ required: true, message: '请输入卧室数量', trigger: 'blur' }, {
-        pattern: /^[0-9]+(\.[0-9]{1,2})?$/, // 匹配整数或最多两位小数的数字
-        message: '请输入有效的价格（数字）',
-        trigger: 'blur'
-    }],
-    hallNum: [{ required: true, message: '请输入客厅数量', trigger: 'blur' }, {
-        pattern: /^[0-9]+(\.[0-9]{1,2})?$/, // 匹配整数或最多两位小数的数字
-        message: '请输入有效的价格（数字）',
-        trigger: 'blur'
-    }],
-    toiletNum: [{ required: true, message: '请输入厕所数量', trigger: 'blur' }, {
-        pattern: /^[0-9]+(\.[0-9]{1,2})?$/, // 匹配整数或最多两位小数的数字
-        message: '请输入有效的价格（数字）',
-        trigger: 'blur'
-    }],
-    community: [{ required: true, message: '请输入小区名称', trigger: 'blur' }],
-    address: [{ required: true, message: '请选择地址', trigger: 'blur' }],
-    sellPoint: [{ required: true, message: '请输入核心卖点', trigger: 'blur' }],
-    ownerMood: [{ required: true, message: '请输入业主心态', trigger: 'blur' }],
-})
+    buildTime: [{ required: true, message: "请选择建筑时间", trigger: "blur" }],
+    decoration: [{ required: true, message: "请选择装修类型", trigger: "blur" }],
+    orientation: [{ required: true, message: "请选择朝向", trigger: "blur" }],
+    propertyType: [{ required: true, message: "请选择物业类型", trigger: "blur" }],
+    subway: [{ required: true, message: "请选择地铁", trigger: "blur" }],
+    floor: [
+        { required: true, message: "请输入楼层", trigger: "blur" },
+        {
+            type: "number",
+            min: 1,
+            message: "楼层必须是大于 0 的正整数",
+            trigger: "blur",
+        },
+    ],
+});
 
+const handleRemoveImage = (img, index) => {
+    deletedImages.value.push(img); // 将被删除的图片路径保存到删除列表
+    existingImages.value.splice(index, 1); // 从现有列表中移除
+};
+
+// 加载数据
+onMounted(async () => {
+    const res = await axios.get(`/adminapi/house/list/${route.params.id}`);
+    Object.assign(houseForm, res.data.data[0]);
+    existingImages.value = res.data.data[0].houseImg; // 加载已存在的图片
+});
+
+// 提交数据
 const submitForm = async () => {
     houseFormRef.value.validate(async (valid) => {
         if (valid) {
             const formData = new FormData();
+
+            // 添加表单字段
             Object.keys(houseForm).forEach((key) => {
-                if (key !== 'houseImg') {
+                if (key !== "houseImg") {
                     formData.append(key, houseForm[key]);
-                    
                 }
             });
+
+            // 添加新上传的图片
             houseForm.houseImg.forEach((file) => {
-                formData.append('houseImg', file.raw);
-                console.log('houseImg:', file.raw);
-                
+                formData.append("newImages", file.raw);
             });
+
+            // 添加删除的图片路径
+            formData.append("deletedImages", JSON.stringify(deletedImages.value));
+
             try {
-                const res = await axios.post('/adminapi/house/add', formData, {
+                const res = await axios.put(`/adminapi/house/update/${route.params.id}`, formData, {
                     headers: {
-                        'Content-Type': 'multipart/form-data',
+                        "Content-Type": "multipart/form-data",
                     },
                 });
-                if (res.data.ActionType === 'ok') {
-                    ElMessage.success('房源添加成功');
+                if (res.data.ActionType === "ok") {
+                    ElMessage.success("房源更新成功");
                 } else {
-                    ElMessage.error(res.data.message || '房源添加失败');
+                    ElMessage.error("房源更新失败");
                 }
             } catch (error) {
-                ElMessage.error('提交失败，请稍后再试');
-                console.error('提交失败:', error);
+                ElMessage.error("提交失败，请稍后再试");
+                console.error("提交失败:", error);
             }
         }
     });
 };
 
-const props = {
-    expandTrigger: 'hover',
-}
-
+const props = { expandTrigger: "hover" };
+// 地址、朝向等选项省略
 const addressOptions = [
     {
         value: '武侯',
@@ -390,8 +405,38 @@ const subwayOptions = [
     }
 ]   
 </script>
-<style lang="scss" scoped>
+
+<style scoped>
 .el-form {
     margin-top: 50px;
+}
+.image-preview {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+.image-item {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    overflow: hidden;
+    border-radius: 5px;
+}
+.image-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.3s;
+    cursor: pointer;
+}
+.image-item:hover .image-overlay {
+    opacity: 1;
 }
 </style>

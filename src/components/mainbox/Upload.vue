@@ -18,6 +18,8 @@ const emits = defineEmits(['kerwinchange'])
 const uploadAvatar = computed(
     () => props.avatar.includes('blob') ? props.avatar : 'http://localhost:3000' + props.avatar
 )
+console.log(uploadAvatar.value);
+
 //每次选择完图片之后的回调
 const handleChange = (file) => {
     emits('kerwinchange', file.raw )

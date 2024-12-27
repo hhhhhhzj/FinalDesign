@@ -14,7 +14,7 @@
 </template>
 
 <script setup>
-import { ref, defineProps, defineEmits } from 'vue';
+import { ref, defineProps, defineEmits, watch } from 'vue';
 import { Plus } from '@element-plus/icons-vue';
 
 const props = defineProps({
@@ -30,15 +30,18 @@ const emits = defineEmits(['update:modelValue']);
 // 上传文件列表
 const fileList = ref([]);
 
+
+console.log('multi-upload,',fileList.value);
+
 // 每次文件变化的回调
 const handleFileChange = (file, fileListUpdated) => {
     // 更新本地 fileList 数据
+    
     fileList.value = fileListUpdated.map((file) => ({
         name: file.name,
-        url: file.url || URL.createObjectURL(file.raw),
+        url: URL.createObjectURL(file.raw),
         raw: file.raw,
     }));
-
     // 将文件列表回传给父组件
     emits('update:modelValue', fileList.value);
 };
