@@ -41,6 +41,39 @@ const HouseService = {
             _id,
         });
     },
+
+    removeImages: async (id, images) => {
+        try {
+            const house = await HouseModel.findById(id);
+            if (house) {
+                house.houseImg = house.houseImg.filter((img) => !images.includes(img));
+                await house.save();
+            }
+        } catch (error) {
+            console.log('houseService.removeImages error:', error);
+        }
+    },
+
+    update: async (id, data) => {
+        try {
+            const house = await HouseModel.findById(id);
+            if (house) {
+                // 合并新图片和现有图片路径
+                house.houseImg = [
+                    ...house.houseImg.filter((img) => !data.newImages.includes(img)), // 保留未删除的图片
+                    ...(data.newImages || []), // 添加新上传的图片
+                ];
+    
+                // 更新其他字段
+                Object.assign(house, data);
+                delete house.newImages; // 防止保存新图片路径字段到数据库
+                return await house.save();
+            }
+            return null;
+        } catch (error) {
+            console.error('更新房源失败:', error);
+        }
+    }
 };
 
 module.exports = HouseService;

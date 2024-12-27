@@ -181,16 +181,21 @@ const submitForm = async () => {
                 }
             });
 
+            // 添加现有图片路径
+            formData.append("existingImages", JSON.stringify(existingImages.value));
+
             // 添加新上传的图片
             houseForm.houseImg.forEach((file) => {
-                formData.append("newImages", file.raw);
+                if (file.raw) {
+                    formData.append("newImages", file.raw);
+                }
             });
 
             // 添加删除的图片路径
             formData.append("deletedImages", JSON.stringify(deletedImages.value));
 
             try {
-                const res = await axios.put(`/adminapi/house/update/${route.params.id}`, formData, {
+                const res = await axios.post(`/adminapi/house/update/${route.params.id}`, formData, {
                     headers: {
                         "Content-Type": "multipart/form-data",
                     },

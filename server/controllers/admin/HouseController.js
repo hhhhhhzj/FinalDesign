@@ -97,6 +97,47 @@ const HouseController = {
             });
         }
     },
+
+    update: async (req, res) => {
+        try {
+            const { deletedImages, ...houseData } = req.body;
+    
+            // 删除旧图片文件
+            if (deletedImages) {
+                const imagesToDelete = JSON.parse(deletedImages);
+                imagesToDelete.forEach((imgPath) => {
+                    const fullPath = path.join(__dirname, '../../public', imgPath);
+                    if (fs.existsSync(fullPath)) {
+                        fs.unlinkSync(fullPath); // 删除文件
+                        console.log(`Deleted image: ${fullPath}`);
+                    }
+                });
+    
+                // 从数据库中删除旧图片记录
+                await HouseService.removeImages(req.params.id, imagesToDelete);
+            }
+    
+            // 新上传的图片路径
+            const newImages = req.files.map((file) => `/houseuploads/${file.filename}`);
+    
+            // 合并新上传的图片和现有图片
+            const updatedHouse = await HouseService.update(req.params.id, {
+                ...houseData,
+                newImages, // 只传入新图片，由服务层合并处理
+            });
+    
+            res.send({
+                ActionType: 'ok',
+                data: updatedHouse,
+            });
+        } catch (error) {
+            console.error('更新房源失败:', error);
+            res.status(500).send({
+                ActionType: 'error',
+                message: '更新房源失败',
+            });
+        }
+    }
 };
 
 module.exports = HouseController;
