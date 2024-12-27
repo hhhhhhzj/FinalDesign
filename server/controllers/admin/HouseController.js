@@ -101,7 +101,8 @@ const HouseController = {
     update: async (req, res) => {
         try {
             const { deletedImages, ...houseData } = req.body;
-    
+            console.log('deletedImages:', deletedImages)
+            console.log('houseData:', houseData)
             // 删除旧图片文件
             if (deletedImages) {
                 const imagesToDelete = JSON.parse(deletedImages);

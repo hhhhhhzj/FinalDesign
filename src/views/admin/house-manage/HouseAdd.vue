@@ -60,7 +60,7 @@
             </el-form-item> -->
 
             <el-form-item label="室内图片" prop="houseImg">
-                <MultiUpload v-model="houseForm.houseImg" :max-count="5" />
+                <MultiUpload v-model="houseForm.houseImg"/>
             </el-form-item>
 
             <el-form-item>
@@ -84,6 +84,7 @@ import { useRouter,useRoute } from 'vue-router';
 // --------------------------------
 const router = useRouter()
 const route = useRoute()
+const existingImages = ref([]);
 const houseFormRef = ref()
 const houseForm = reactive({
     title: '1',
@@ -155,6 +156,24 @@ const houseFormRules = reactive({
     address: [{ required: true, message: '请选择地址', trigger: 'blur' }],
     sellPoint: [{ required: true, message: '请输入核心卖点', trigger: 'blur' }],
     ownerMood: [{ required: true, message: '请输入业主心态', trigger: 'blur' }],
+    houseImg: [
+        {
+            validator: (rule, value, callback) => {
+                // 计算现有图片和新上传图片的总和
+                const existingLength = existingImages ? existingImages.value?.length || 0 : 0;
+                const newLength = value ? value.length : 0;
+                const totalImages = existingLength + newLength;
+
+                // 验证总数是否超过限制
+                if (totalImages > 5) {
+                    callback(new Error('图片总数不能超过5张'));
+                } else {
+                    callback();
+                }
+            },
+            trigger: 'change',
+        },
+    ],
 })
 
 const submitForm = async () => {

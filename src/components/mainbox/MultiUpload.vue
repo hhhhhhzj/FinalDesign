@@ -7,7 +7,7 @@
         :on-change="handleFileChange"
         :on-remove="handleFileRemove"
     >
-        <el-icon v-if="fileList.length < maxCount" class="uploader-icon">
+        <el-icon class="uploader-icon">
             <Plus />
         </el-icon>
     </el-upload>
@@ -19,10 +19,6 @@ import { Plus } from '@element-plus/icons-vue';
 
 const props = defineProps({
     modelValue: Array, // 用于绑定传递的图片列表
-    maxCount: {
-        type: Number,
-        default: 5, // 默认最多上传 5 张图片
-    },
 });
 
 const emits = defineEmits(['update:modelValue']);

@@ -131,30 +131,74 @@ const existingImages = ref([]);
 const deletedImages = ref([]);
 
 const houseFormRules = reactive({
-    title: [{ required: true, message: "请输入标题", trigger: "blur" }],
-    price: [
-        { required: true, message: "请输入价格", trigger: "blur" },
-        {
-            pattern: /^[0-9]+(\.[0-9]{1,2})?$/,
-            message: "请输入有效的价格（数字）",
-            trigger: "blur",
-        },
-    ],
-    buildTime: [{ required: true, message: "请选择建筑时间", trigger: "blur" }],
-    decoration: [{ required: true, message: "请选择装修类型", trigger: "blur" }],
-    orientation: [{ required: true, message: "请选择朝向", trigger: "blur" }],
-    propertyType: [{ required: true, message: "请选择物业类型", trigger: "blur" }],
-    subway: [{ required: true, message: "请选择地铁", trigger: "blur" }],
+    title: [{ required: true, message: '请输入标题', trigger: 'blur' }],
+    price: [{ required: true, message: '请输入价格', trigger: 'blur' }, {
+        pattern: /^[0-9]+(\.[0-9]{1,2})?$/, // 匹配整数或最多两位小数的数字
+        message: '请输入有效的价格（数字）',
+        trigger: 'blur'
+    }],
+    buildTime: [{ required: true, message: '请选择建筑时间', trigger: 'blur' }],
+    decoration: [{ required: true, message: '请选择装修类型', trigger: 'blur' }],
+    orientation: [{ required: true, message: '请选择朝向', trigger: 'blur' }],
+    propertyType: [{ required: true, message: '请选择物业类型', trigger: 'blur' }],
+    subway: [{ required: true, message: '请选择地铁', trigger: 'blur' }],
     floor: [
-        { required: true, message: "请输入楼层", trigger: "blur" },
+        { required: true, message: '请输入楼层', trigger: 'blur' },
         {
-            type: "number",
+            type: 'number',
             min: 1,
-            message: "楼层必须是大于 0 的正整数",
-            trigger: "blur",
+            message: '楼层必须是大于 0 的正整数',
+            trigger: 'blur',
         },
     ],
-});
+    area: [{ required: true, message: '请输入面积', trigger: 'blur' }, {
+        pattern: /^[0-9]+(\.[0-9]{1,2})?$/, // 匹配整数或最多两位小数的数字
+        message: '请输入有效的价格（数字）',
+        trigger: 'blur'
+    }],
+    perSquarePrice: [{ required: true, message: '请输入每平方价格', trigger: 'blur' }, {
+        pattern: /^[0-9]+(\.[0-9]{1,2})?$/, // 匹配整数或最多两位小数的数字
+        message: '请输入有效的价格（数字）',
+        trigger: 'blur'
+    }],
+    roomNum: [{ required: true, message: '请输入卧室数量', trigger: 'blur' }, {
+        pattern: /^[0-9]+(\.[0-9]{1,2})?$/, // 匹配整数或最多两位小数的数字
+        message: '请输入有效的价格（数字）',
+        trigger: 'blur'
+    }],
+    hallNum: [{ required: true, message: '请输入客厅数量', trigger: 'blur' }, {
+        pattern: /^[0-9]+(\.[0-9]{1,2})?$/, // 匹配整数或最多两位小数的数字
+        message: '请输入有效的价格（数字）',
+        trigger: 'blur'
+    }],
+    toiletNum: [{ required: true, message: '请输入厕所数量', trigger: 'blur' }, {
+        pattern: /^[0-9]+(\.[0-9]{1,2})?$/, // 匹配整数或最多两位小数的数字
+        message: '请输入有效的价格（数字）',
+        trigger: 'blur'
+    }],
+    community: [{ required: true, message: '请输入小区名称', trigger: 'blur' }],
+    address: [{ required: true, message: '请选择地址', trigger: 'blur' }],
+    sellPoint: [{ required: true, message: '请输入核心卖点', trigger: 'blur' }],
+    ownerMood: [{ required: true, message: '请输入业主心态', trigger: 'blur' }],
+    houseImg: [
+        {
+            validator: (rule, value, callback) => {
+                // 计算现有图片和新上传图片的总和
+                const existingLength = existingImages ? existingImages.value?.length || 0 : 0;
+                const newLength = value ? value.length : 0;
+                const totalImages = existingLength + newLength;
+
+                // 验证总数是否超过限制
+                if (totalImages > 5) {
+                    callback(new Error('图片总数不能超过5张'));
+                } else {
+                    callback();
+                }
+            },
+            trigger: 'change',
+        },
+    ],
+})
 
 const handleRemoveImage = (img, index) => {
     deletedImages.value.push(img); // 将被删除的图片路径保存到删除列表
