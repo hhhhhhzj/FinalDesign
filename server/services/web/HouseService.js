@@ -21,6 +21,14 @@ const HouseService = {
           throw error;
         }
       },
+      search: async (query) => {
+        try {
+          return await HouseModel.find(query).sort({ createdAt: -1 });
+        } catch (error) {
+          console.error("HouseService.search error:", error);
+          throw error;
+        }
+      },
   };
 
 module.exports = HouseService;

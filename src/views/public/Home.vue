@@ -84,7 +84,20 @@ const pagination = reactive({
   pageSize: 10,
   currentPage: 1,
 });
+import { useRouter } from "vue-router";
 
+const searchKeyword = ref(""); // 搜索关键字
+const router = useRouter();
+
+// 搜索处理函数
+const handleSearch = () => {
+  if (searchKeyword.value.trim()) {
+    router.push({
+      path: "/searchresult",
+      query: { keyword: searchKeyword.value.trim() },
+    });
+  }
+};
 // 筛选条件
 const filters = reactive({
   area: null,

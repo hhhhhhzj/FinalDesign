@@ -54,7 +54,44 @@ const HouseController = {
         }
       },
 
-
+      search: async (req, res) => {
+        try {
+          const { keyword = "" } = req.query;
+    
+          // 构建模糊搜索条件
+          const query = {
+            isPublish: 1,
+            $or: [
+              { title: new RegExp(keyword, "i") },
+              { community: new RegExp(keyword, "i") },
+              { address: new RegExp(keyword, "i") },
+              { decoration: new RegExp(keyword, "i") },
+              { orientation: new RegExp(keyword, "i") },
+              { subway: new RegExp(keyword, "i") },
+              { propertyType: new RegExp(keyword, "i") },
+              { buildTime: new RegExp(keyword, "i") },
+              { roomNum: Number(keyword) || undefined },
+              { hallNum: Number(keyword) || undefined },
+              { toiletNum: Number(keyword) || undefined },
+              { floor: Number(keyword) || undefined },
+              { price: Number(keyword) || undefined },
+              { area: Number(keyword) || undefined },
+              { perSquarePrice: Number(keyword) || undefined },
+            ],
+          };
+    
+          // 调用服务层获取数据
+          const data = await HouseService.search(query);
+    
+          res.send({
+            ActionType: "ok",
+            data,
+          });
+        } catch (error) {
+          console.error("搜索失败:", error);
+          res.status(500).send({ ActionType: "error", message: "搜索失败" });
+        }
+      },
 };
 
 module.exports = HouseController;

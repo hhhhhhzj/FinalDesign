@@ -27,6 +27,11 @@ const routes = [
     path: "/profile",
     name: "profile",
     component: () => import("../views/public/Profile.vue"),
+  }, 
+  {
+    path: "/searchresult",
+    name: "searchresult",
+    component: () => import("../views/public/SearchResult.vue"),
   },
   {
     path: "/mainbox",
