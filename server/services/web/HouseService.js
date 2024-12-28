@@ -1,26 +1,26 @@
 const HouseModel = require('../../models/HouseModel');
 
 const HouseService = {
-    getList: async ({ skip = 0, limit = 10 }) => {
+    getList: async (query, skip = 0, limit = 10) => {
         try {
-            return await HouseModel.find({ isPublish: 1 }) // 只查询已发布的数据
-                .skip(skip)
-                .limit(limit)
-                .sort({ createdAt: -1 }); // 按创建时间降序排列
+          return await HouseModel.find(query)
+            .skip(skip)
+            .limit(limit)
+            .sort({ createdAt: -1 });
         } catch (error) {
-            console.error('web houseService.getList error:', error);
-            throw error;
+          console.error('web houseService.getList error:', error);
+          throw error;
         }
-    },
-
-    count: async () => {
+      },
+    
+      count: async (query) => {
         try {
-            return await HouseModel.countDocuments({ isPublish: 1 }); // 统计总条数
+          return await HouseModel.countDocuments(query);
         } catch (error) {
-            console.error('houseService.count error:', error);
-            throw error;
+          console.error('houseService.count error:', error);
+          throw error;
         }
-    },
-};
+      },
+  };
 
 module.exports = HouseService;

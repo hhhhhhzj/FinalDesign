@@ -2,8 +2,32 @@
   <Nav />
   <div class="home">
     <el-container>
-      <el-header>header</el-header>
+        <div class="search-container">
+          <el-input v-model="searchKeyword" placeholder="请输入关键字搜索" clearable class="search-input">
+            <template #append>
+              <el-button @click="handleSearch">搜索</el-button>
+            </template>
+          </el-input>
+        </div>
       <el-main>
+        <div class="filter-container">
+
+
+          <!-- 筛选栏 -->
+          <div class="filter-container">
+            <el-row v-for="(options, key) in filterOptions" :key="key">
+              <el-col :span="2" class="filter-title">
+                {{ key }}
+              </el-col>
+              <el-col :span="22">
+                <el-segmented v-model="filters[key]" :options="options" size="small"
+                  @change="(value) => applyFilter(key, value)" />
+              </el-col>
+            </el-row>
+          </div>
+
+
+        </div>
         <div class="house-list">
           <el-row class="card-rowContainer" :gutter="20">
             <!-- 单个卡片 -->
@@ -61,19 +85,91 @@ const pagination = reactive({
   currentPage: 1,
 });
 
+// 筛选条件
+const filters = reactive({
+  area: null,
+  subway: null,
+  price: null,
+  roomNum: null,
+  orientation: null,
+  address: null,
+  decoration: null,
+});
+// 筛选选项
+const filterOptions = {
+  '面积': ["不限", "<60㎡", "60-70㎡", "70-80㎡", "80㎡以上"],
+  '地铁': [
+    '不限',
+    "无",
+    "1号线",
+    "2号线",
+    "3号线",
+    "4号线",
+    "5号线",
+    "6号线",
+    "7号线",
+    "8号线",
+    "9号线",
+    "10号线",
+    "17号线",
+    "18号线",
+    "19号线",
+    "30号线",
+  ],
+  '区域': [
+    '不限',
+    "武侯",
+    "金牛",
+    "成华",
+    "龙泉驿",
+    "新都",
+    "双流",
+    "郫都",
+    "大邑",
+    "新津",
+    "邛崃",
+    "崇州",
+    "简阳",
+    "高新",
+  ],
+  '价格': ["不限", "<50万", "50-70万", "70-100万", "100万以上"],
+  '房型': ["不限", "1室", "2室", "3室", "4室", "5室以上"],
+  '朝向': ["不限", "南", "北", "东", "西"],
+  '装修': ["不限", "毛坯", "普通装修", "精装修", "豪华装修"],
+};
+
 // 获取表格数据
 const getTableData = async () => {
   try {
     const { currentPage, pageSize } = pagination;
+    console.log("发送到后端的筛选条件:", filters);
     const res = await axios.get(`/adminapi/webhouse/list`, {
-      params: { page: currentPage, pageSize },
+      params: {
+        page: currentPage,
+        pageSize,
+        filters: JSON.stringify(filters), // 将筛选条件转为 JSON 字符串
+      },
     });
 
-    tableData.value = res.data.data;
-    pagination.total = res.data.total; // 更新总条数
+    console.log("后端返回的数据:", res.data.data);
+
+    // 确保后端返回的数据能正确赋值
+    if (res.data.ActionType === "ok") {
+      tableData.value = res.data.data; // 更新表格数据
+      pagination.total = res.data.total; // 更新总条数
+    } else {
+      console.error("后端返回了错误的状态:", res.data);
+    }
   } catch (error) {
     console.error("获取表格数据失败:", error);
   }
+};
+// 处理筛选条件变化
+const applyFilter = (key, value) => {
+  filters[key] = value === "不限" ? null : value;
+  console.log("当前筛选条件:", filters); // 打印当前筛选条件
+  pagination.currentPage = 1;
+  getTableData();
 };
 
 // 处理页码变化
@@ -100,8 +196,37 @@ onMounted(() => {
   flex-direction: column;
   align-items: center;
 
+  .search-container {
+    margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+  .el-button {
+    display: flex;
+    justify-content: center;
+  }
+  .search-input {
+    width: 50%;
+    height: 50px;
+    font-size: 1.2em;
+    width: 600px;
+    border: 1px solid #ccc;
+  }
+}
+
   .el-container {
     width: 75%;
+  }
+
+  .filter-container {
+    border: 1px solid red;
+
+    .filter-title {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
   }
 
   .house-list {
