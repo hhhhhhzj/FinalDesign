@@ -21,7 +21,7 @@ const HouseSchema = new Schema({
     ownerMood: String,
     houseImg: [String], // 存储多图片路径
     createdAt: { type: Date, default: Date.now },
-    isPublish: { type: Number, default: 0 }, // 0: 未发布, 1: 已发布
+    isPublish: { type: Number, default: 1 }, // 0: 未发布, 1: 已发布
 });
 
 const HouseModel = mongoose.model('house', HouseSchema);

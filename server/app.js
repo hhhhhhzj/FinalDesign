@@ -8,7 +8,8 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 // 引入admin的路由
 const UserRouter = require('./routes/admin/UserRouter');
-const HouseRouter = require('./routes/admin/HouseRouter');
+const AdminHouseRouter = require('./routes/admin/HouseRouter');
+const WebHouseRouter = require('./routes/web/HouseRouter');
 const UserEditRouter = require('./routes/admin/UserEditRouter');
 const JWT = require('./util/JWT');
 
@@ -30,6 +31,7 @@ app.use('/users', usersRouter);
 
 // 注册admin的路由
 app.use(UserRouter)
+app.use(WebHouseRouter)
 
 app.use((req, res, next) => {
   //如果token有效，next()
@@ -58,7 +60,7 @@ app.use((req, res, next) => {
 })
 // 用户信息修改路由
 app.use(UserEditRouter)
-app.use(HouseRouter)
+app.use(AdminHouseRouter)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

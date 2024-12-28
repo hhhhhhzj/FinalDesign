@@ -60,7 +60,7 @@
             </el-form-item> -->
 
             <el-form-item label="室内图片" prop="houseImg">
-                <MultiUpload v-model="houseForm.houseImg"/>
+                <MultiUpload v-model="houseForm.houseImg" />
             </el-form-item>
 
             <el-form-item>
@@ -79,7 +79,7 @@ import { Plus } from '@element-plus/icons-vue'
 import MultiUpload from '@/components/mainbox/MultiUpload.vue';
 import { ElMessage } from 'element-plus';
 import axios from 'axios'
-import { useRouter,useRoute } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 
 // --------------------------------
 const router = useRouter()
@@ -87,23 +87,30 @@ const route = useRoute()
 const existingImages = ref([]);
 const houseFormRef = ref()
 const houseForm = reactive({
-    title: '1',
-    price: 0,
-    area: 0,
+    title: '68个 精装套三双卫 地铁口 南北通透 随时看房',
+    price: 75,
+    area: 99,
     decoration: '精装修',
     buildTime: '',
     orientation: '北',
-    floor: 1, // 修改为数值类型，默认值设置为 1
+    floor: 13, // 修改为数值类型，默认值设置为 1
     subway: '1号线',
-    perSquarePrice: 0,
-    roomNum: '2',
-    hallNum: '1',
-    toiletNum: '3',
+    perSquarePrice: 7552,
+    roomNum: '3',
+    hallNum: '2',
+    toiletNum: '2',
     propertyType: '其他',
-    community: '1',
-    address: '武侯',
-    sellPoint: '1',
-    ownerMood: '2',
+    community: '福悦里',
+    address: '金牛',
+    sellPoint: `1.房源优势：坐北朝南，位置安静，品质小区。
+2.装修介绍：业主原来自住，精心设计，室内干净温馨。
+3.户型正气：南北的户型、格局周正合理、无浪费面积。
+4.采光充足：楼间距很大、无遮挡、采光非常棒。
+5.地理位置：位于商业繁华地段。闹市中安静的家。`,
+    ownerMood: `1.【房屋状况】：该套房双证齐全，可按揭贷款。
+2.【现在情况】：每一套房源，我们公司只服务一位客户
+3.【专业团队】：全程交易公开透明，专业权证团队，保障产权及时过户，律师团队，全程尽调实勘服务
+4.【友情提示】：买房的朋友可私信告知我需求，为您匹配合适房源,`,
     houseImg: [],
 });
 const houseFormRules = reactive({
@@ -179,18 +186,26 @@ const houseFormRules = reactive({
 const submitForm = async () => {
     houseFormRef.value.validate(async (valid) => {
         if (valid) {
+            // 格式化 buildTime 为 YYYY-MM-DD
+            if (houseForm.buildTime) {
+                houseForm.buildTime = houseForm.buildTime.toISOString().slice(0, 10);
+            }
+
             const formData = new FormData();
+
+            // 添加非图片数据到 FormData
             Object.keys(houseForm).forEach((key) => {
                 if (key !== 'houseImg') {
                     formData.append(key, houseForm[key]);
-                    
                 }
             });
+
+            // 添加图片数据到 FormData
             houseForm.houseImg.forEach((file) => {
                 formData.append('houseImg', file.raw);
                 console.log('houseImg:', file.raw);
-                
             });
+
             try {
                 const res = await axios.post('/adminapi/house/add', formData, {
                     headers: {

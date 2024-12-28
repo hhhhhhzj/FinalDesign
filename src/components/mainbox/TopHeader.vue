@@ -19,7 +19,7 @@
                 </span>
                 <template #dropdown>
                     <el-dropdown-menu>
-                        <el-dropdown-item @click="handleCenter">个人中心</el-dropdown-item>
+                        <el-dropdown-item @click="handleCenter">首页</el-dropdown-item>
                         <el-dropdown-item @click="handleExit">退出</el-dropdown-item>
                     </el-dropdown-menu>
                 </template>
@@ -37,7 +37,7 @@ const handleCollapsed = () => {
     store.commit('changeCollapsed')
 }
 const handleCenter = () => {
-    router.push('/center')
+    router.push('/home')
 }
 const handleExit = () => {
     localStorage.removeItem('token')
