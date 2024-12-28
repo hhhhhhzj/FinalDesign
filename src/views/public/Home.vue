@@ -2,44 +2,49 @@
   <Nav />
   <div class="home">
     <el-container>
-        <div class="search-container">
-          <el-input v-model="searchKeyword" placeholder="请输入关键字搜索" clearable class="search-input">
-            <template #append>
-              <el-button @click="handleSearch">搜索</el-button>
-            </template>
-          </el-input>
-        </div>
+      <div class="search-container">
+        <el-input
+          v-model="searchKeyword"
+          placeholder="请输入关键字搜索"
+          clearable
+          class="search-input"
+        >
+          <template #append>
+            <el-button @click="handleSearch">搜索</el-button>
+          </template>
+          <template #suffix>
+            <el-button v-if="searchKeyword" @click="clearSearch" icon="el-icon-circle-close"></el-button>
+          </template>
+        </el-input>
+      </div>
       <el-main>
         <div class="filter-container">
-
-
-          <!-- 筛选栏 -->
           <div class="filter-container">
             <el-row v-for="(options, key) in filterOptions" :key="key">
-              <el-col :span="2" class="filter-title">
-                {{ key }}
-              </el-col>
+              <el-col :span="2" class="filter-title">{{ key }}</el-col>
               <el-col :span="22">
-                <el-segmented v-model="filters[key]" :options="options" size="small"
-                  @change="(value) => applyFilter(key, value)" />
+                <el-segmented
+                  v-model="filters[key]"
+                  :options="options"
+                  size="small"
+                  @change="(value) => applyFilter(key, value)"
+                />
               </el-col>
             </el-row>
           </div>
-
-
         </div>
         <div class="house-list">
           <el-row class="card-rowContainer" :gutter="20">
-            <!-- 单个卡片 -->
             <el-col :span="24" v-for="(house, index) in tableData" :key="index">
               <el-card class="house-card" shadow="hover">
                 <div class="card-content">
-                  <!-- 左侧图片 -->
                   <div class="card-left">
-                    <img :src="'http://localhost:3000' + (house.houseImg[1] || '/default.jpg')" alt="房源图片"
-                      class="house-image" />
+                    <img
+                      :src="'http://localhost:3000' + (house.houseImg[1] || '/default.jpg')"
+                      alt="房源图片"
+                      class="house-image"
+                    />
                   </div>
-                  <!-- 中间信息 -->
                   <div class="card-middle">
                     <div class="card-header">
                       <h3 class="house-title">{{ house.title || "暂无标题" }}</h3>
@@ -55,7 +60,6 @@
                       </p>
                     </div>
                   </div>
-                  <!-- 右侧价格 -->
                   <div class="card-right">
                     <span class="total-price">{{ house.price || "未知价格" }}万</span>
                     <span class="price-per-square">均价 {{ house.perSquarePrice || "未知" }} 元/㎡</span>
@@ -65,8 +69,13 @@
             </el-col>
           </el-row>
         </div>
-        <el-pagination layout="prev, pager, next" :total="pagination.total" :page-size="pagination.pageSize"
-          :current-page="pagination.currentPage" @current-change="handlePageChange" />
+        <el-pagination
+          layout="prev, pager, next"
+          :total="pagination.total"
+          :page-size="pagination.pageSize"
+          :current-page="pagination.currentPage"
+          @current-change="handlePageChange"
+        />
       </el-main>
       <el-footer>footer</el-footer>
     </el-container>
@@ -84,21 +93,9 @@ const pagination = reactive({
   pageSize: 10,
   currentPage: 1,
 });
-import { useRouter } from "vue-router";
 
-const searchKeyword = ref(""); // 搜索关键字
-const router = useRouter();
+const searchKeyword = ref("");
 
-// 搜索处理函数
-const handleSearch = () => {
-  if (searchKeyword.value.trim()) {
-    router.push({
-      path: "/searchresult",
-      query: { keyword: searchKeyword.value.trim() },
-    });
-  }
-};
-// 筛选条件
 const filters = reactive({
   area: null,
   subway: null,
@@ -108,96 +105,64 @@ const filters = reactive({
   address: null,
   decoration: null,
 });
-// 筛选选项
+
 const filterOptions = {
-  '面积': ["不限", "<60㎡", "60-70㎡", "70-80㎡", "80㎡以上"],
-  '地铁': [
-    '不限',
-    "无",
-    "1号线",
-    "2号线",
-    "3号线",
-    "4号线",
-    "5号线",
-    "6号线",
-    "7号线",
-    "8号线",
-    "9号线",
-    "10号线",
-    "17号线",
-    "18号线",
-    "19号线",
-    "30号线",
-  ],
-  '区域': [
-    '不限',
-    "武侯",
-    "金牛",
-    "成华",
-    "龙泉驿",
-    "新都",
-    "双流",
-    "郫都",
-    "大邑",
-    "新津",
-    "邛崃",
-    "崇州",
-    "简阳",
-    "高新",
-  ],
-  '价格': ["不限", "<50万", "50-70万", "70-100万", "100万以上"],
-  '房型': ["不限", "1室", "2室", "3室", "4室", "5室以上"],
-  '朝向': ["不限", "南", "北", "东", "西"],
-  '装修': ["不限", "毛坯", "普通装修", "精装修", "豪华装修"],
+  面积: ["不限", "<60㎡", "60-70㎡", "70-80㎡", "80㎡以上"],
+  地铁: ["不限", "无", "1号线", "2号线", "3号线", "4号线", "5号线", "6号线", "7号线", "8号线", "9号线", "10号线", "17号线", "18号线", "19号线", "30号线"],
+  区域: ["不限", "武侯", "金牛", "成华", "龙泉驿", "新都", "双流", "郫都", "大邑", "新津", "邛崃", "崇州", "简阳", "高新"],
+  价格: ["不限", "<50万", "50-70万", "70-100万", "100万以上"],
+  房型: ["不限", "1室", "2室", "3室", "4室", "5室以上"],
+  朝向: ["不限", "南", "北", "东", "西"],
+  装修: ["不限", "毛坯", "普通装修", "精装修", "豪华装修"],
 };
 
-// 获取表格数据
 const getTableData = async () => {
   try {
-    const { currentPage, pageSize } = pagination;
-    console.log("发送到后端的筛选条件:", filters);
     const res = await axios.get(`/adminapi/webhouse/list`, {
       params: {
-        page: currentPage,
-        pageSize,
-        filters: JSON.stringify(filters), // 将筛选条件转为 JSON 字符串
+        page: pagination.currentPage,
+        pageSize: pagination.pageSize,
+        filters: JSON.stringify(filters),
+        keyword: searchKeyword.value.trim(),
       },
     });
 
-    console.log("后端返回的数据:", res.data.data);
-
-    // 确保后端返回的数据能正确赋值
     if (res.data.ActionType === "ok") {
-      tableData.value = res.data.data; // 更新表格数据
-      pagination.total = res.data.total; // 更新总条数
-    } else {
-      console.error("后端返回了错误的状态:", res.data);
+      tableData.value = res.data.data;
+      pagination.total = res.data.total;
     }
   } catch (error) {
     console.error("获取表格数据失败:", error);
   }
 };
-// 处理筛选条件变化
-const applyFilter = (key, value) => {
-  filters[key] = value === "不限" ? null : value;
-  console.log("当前筛选条件:", filters); // 打印当前筛选条件
+
+const handleSearch = async () => {
   pagination.currentPage = 1;
-  getTableData();
+  await getTableData();
 };
 
-// 处理页码变化
-const handlePageChange = (page) => {
+const clearSearch = async () => {
+  searchKeyword.value = "";
+  pagination.currentPage = 1;
+  await getTableData();
+};
+
+const applyFilter = async (key, value) => {
+  filters[key] = value === "不限" ? null : value;
+  pagination.currentPage = 1;
+  await getTableData();
+};
+
+const handlePageChange = async (page) => {
   pagination.currentPage = page;
-  getTableData();
+  await getTableData();
 };
-
-// 格式化年份
 const formatYear = (date) => {
   if (!date) return "未知年份";
-  const year = new Date(date).getFullYear(); // 提取年份
+  const year = new Date(date).getFullYear();
   return year || "未知年份";
 };
-// 页面加载时获取数据
+
 onMounted(() => {
   getTableData();
 });
