@@ -6,14 +6,14 @@
         <el-input
           v-model="searchKeyword"
           placeholder="请输入关键字搜索"
-          clearable
+          
           class="search-input"
         >
           <template #append>
             <el-button @click="handleSearch">搜索</el-button>
           </template>
           <template #suffix>
-            <el-button v-if="searchKeyword" @click="clearSearch" icon="el-icon-circle-close"></el-button>
+            <el-button v-if="searchKeyword" @click="clearSearch">清空</el-button>
           </template>
         </el-input>
       </div>
@@ -183,13 +183,13 @@ onMounted(() => {
   .el-button {
     display: flex;
     justify-content: center;
+    
   }
   .search-input {
     width: 50%;
     height: 50px;
     font-size: 1.2em;
     width: 600px;
-    border: 1px solid #ccc;
   }
 }
 
@@ -198,7 +198,9 @@ onMounted(() => {
   }
 
   .filter-container {
-    border: 1px solid red;
+    border: 1px solid #ccc;
+    padding: 20px;
+    border-radius: 10px;
 
     .filter-title {
       display: flex;
@@ -209,6 +211,7 @@ onMounted(() => {
 
   .house-list {
     margin-top: 10px;
+    min-height: 700px;
     display: flex;
     flex-direction: column;
     gap: 15px;
