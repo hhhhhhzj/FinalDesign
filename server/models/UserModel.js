@@ -8,6 +8,10 @@ const UserType = {
     gender:Number, //性别 0,1,2
     introduction:String,//简介
     avatar:String,//头像
+    collects: {
+        type: [String], // 存放收藏的房源 ID
+        default: [],
+      },
     role:Number,//1:管理员 2:普通用户
 }
 const UserModel = mongoose.model('user',new schema(UserType))

@@ -214,6 +214,7 @@ const submitForm = async () => {
                 });
                 if (res.data.ActionType === 'ok') {
                     ElMessage.success('房源添加成功');
+                    router.push('/house-manage/houselist')
                 } else {
                     ElMessage.error(res.data.message || '房源添加失败');
                 }

@@ -55,5 +55,19 @@ const UserEditService = {
       console.log("userEditServices delList error", error);
     }
   },
+
+  collect: async (userId, houseId) => {
+    try {
+      // 使用 `$addToSet` 避免重复添加
+      await UserModel.updateOne(
+        { _id: userId },
+        { $addToSet: { collects: houseId } }
+      );
+      return { message: "收藏成功" };
+    } catch (error) {
+      console.error("UserEditServices collect error:", error);
+      throw new Error("收藏失败");
+    }
+  },
 };
 module.exports = UserEditService;

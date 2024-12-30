@@ -81,6 +81,40 @@ getSimilarHouses: async (req, res) => {
   }
 },
 
+getCollects: async (req, res) => {
+  try {
+    const { collects } = req.body; // 从请求 body 中获取收藏的房源 ID 列表
+
+    if (!Array.isArray(collects) || collects.length === 0) {
+      return res.status(400).send({
+        ActionType: 'error',
+        message: '无效的收藏房源列表',
+      });
+    }
+
+    // 调用 service 层查询符合条件的房源
+    const houses = await HouseService.getCollects(collects);
+
+    if (houses.length === 0) {
+      return res.status(404).send({
+        ActionType: 'error',
+        message: '没有找到符合条件的房源',
+      });
+    }
+
+    // 返回符合条件的房源数据
+    res.send({
+      ActionType: 'ok',
+      data: houses, // 返回找到的房源数据
+    });
+  } catch (error) {
+    console.error('获取收藏房源失败:', error);
+    res.status(500).send({
+      ActionType: 'error',
+      message: '服务器错误，无法获取房源数据',
+    });
+  }
+},
 };
 
 module.exports = HouseController;

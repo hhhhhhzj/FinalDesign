@@ -13,11 +13,11 @@ mongoose
 
 // 图片路径
 const imagePaths = [
-  "/houseuploads/78a8daabb7ff65405765c4374255806b",
-  "/houseuploads/4e701d7a5269a6afe26900e519e30498",
-  "/houseuploads/32388dcbd5bd2581bc9a4d56d00b1169",
-  "/houseuploads/4c8426d16af3d035514d60214e2cbbd7",
-  "/houseuploads/81dd05f23b2d688dbe5940ed4e4c316f"
+  "/houseuploads/4af030d4bf00baa54a24ffe418c14d35",
+  "/houseuploads/4def69e8ad88efe748937625faf630b8",
+  "/houseuploads/4bec49dfcb2dad8fb6b2d8c2811b4170",
+  "/houseuploads/1c0b0ff47e61f152237f98c0e8ca0ed2",
+  "/houseuploads/88730cb30107d399776f88d744764064"
 ];
 
 // 房源生成逻辑
@@ -26,58 +26,33 @@ const generateHouseData = () => {
   const propertyTypes = ["公寓", "别墅", "普通住宅", "平房", "其他"];
   const decorations = ["毛坯", "普通装修", "精装修", "豪华装修"];
   const subways = [
-    "无",
-    "1号线",
-    "2号线",
-    "3号线",
-    "4号线",
-    "5号线",
-    "6号线",
-    "7号线",
-    "8号线",
-    "9号线",
-    "10号线",
-    "17号线",
-    "18号线",
-    "19号线",
-    "30号线",
+    "无", "1号线", "2号线", "3号线", "4号线", "5号线", "6号线", "7号线", 
+    "8号线", "9号线", "10号线", "17号线", "18号线", "19号线", "30号线"
   ];
   const addresses = [
-    "武侯",
-    "金牛",
-    "成华",
-    "龙泉驿",
-    "新都",
-    "双流",
-    "郫都",
-    "大邑",
-    "新津",
-    "邛崃",
-    "崇州",
-    "简阳",
-    "高新",
+    "武侯", "金牛", "成华", "龙泉驿", "新都", "双流", "郫都", "大邑", 
+    "新津", "邛崃", "崇州", "简阳", "高新"
   ];
 
   const area = faker.datatype.number({ min: 60, max: 200 });
   const price = faker.datatype.number({ min: 50, max: 300 });
   const perSquarePrice = Math.round((price * 10000) / area);
-
+  const subwayLine = faker.random.arrayElement(subways);
+  const decoration = faker.random.arrayElement(decorations);
+  
+  // 房源标题生成
+  const title = `${area}平米 ${decoration} ${faker.random.arrayElement(["三房", "四房", "二房"])} ${subwayLine}旁 南北通透 随时看房`;
+  
+  // 房源数据返回
   return {
-    title: `${faker.datatype.number({
-      min: 50,
-      max: 80,
-    })}个 ${faker.random.arrayElement(
-      decorations
-    )}套三双卫 ${faker.random.arrayElement(
-      subways
-    )} ${faker.random.arrayElement(orientations)}通透 随时看房`,
+    title, // 使用生成的标题
     price,
     area,
-    decoration: faker.random.arrayElement(decorations),
-    buildTime: faker.date.past(30).toISOString().slice(0, 10), // 生成符合 ISO 8601 格式的日期
+    decoration,
+    buildTime: faker.date.past(30).toISOString().slice(0, 10),
     orientation: faker.random.arrayElement(orientations),
     floor: faker.datatype.number({ min: 1, max: 30 }),
-    subway: faker.random.arrayElement(subways),
+    subway: subwayLine, // 保持一致性
     perSquarePrice,
     roomNum: faker.datatype.number({ min: 1, max: 5 }),
     hallNum: faker.datatype.number({ min: 1, max: 3 }),
@@ -96,7 +71,7 @@ const generateHouseData = () => {
 // 插入数据
 const seedData = async () => {
   try {
-    const data = Array.from({ length: 3 }, generateHouseData); // 生成 3 条数据
+    const data = Array.from({ length: 900 }, generateHouseData); // 生成 3 条数据
     await HouseModel.insertMany(data); // 插入数据到 MongoDB
     console.log("数据插入成功");
     mongoose.disconnect(); // 断开数据库连接

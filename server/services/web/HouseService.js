@@ -42,6 +42,21 @@ const HouseService = {
         throw error;
       }
     },
+
+    getCollects: async (collects) => {
+      try {
+        // 查询数据库中符合条件的房源
+        const houses = await HouseModel.find({
+          _id: { $in: collects }, // 使用 $in 操作符匹配传来的房源 ID 列表
+          isPublish: 1, // 只筛选 isPublish 为 1 的房源
+        });
+  
+        return houses; // 返回符合条件的房源
+      } catch (error) {
+        console.error('HouseService.getCollects error:', error);
+        throw error; // 如果查询出错，抛出错误
+      }
+    },
   };
 
 module.exports = HouseService;

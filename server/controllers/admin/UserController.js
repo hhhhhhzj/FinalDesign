@@ -33,6 +33,7 @@ const UserController = {
             introduction: result[0].introduction,
             avatar: result[0].avatar,
             role: result[0].role,
+            collects: result[0].collects,
           },
         });
       }

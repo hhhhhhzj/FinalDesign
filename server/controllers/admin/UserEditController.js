@@ -79,7 +79,29 @@ delList: async (req, res) => {
         console.log("userEditController delList error:", error);
         
     }
-}
+},
+
+collect: async (req, res) => {
+  try {
+    const { houseId } = req.body;
+    const token = req.headers["authorization"].split(" ")[1];
+    const payload = JWT.verify(token);
+
+    // 调用 Service 层的方法
+    const result = await UserEditServices.collect(payload.id, houseId);
+
+    res.send({
+      ActionType: "ok",
+      message: result.message,
+    });
+  } catch (error) {
+    console.error("收藏失败:", error);
+    res.status(500).send({
+      ActionType: "error",
+      message: "收藏失败",
+    });
+  }
+},
 
 };
 module.exports = UserEditController;

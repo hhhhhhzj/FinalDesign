@@ -29,7 +29,9 @@
               <p>{{ houseForm.perSquarePrice }}元/平方</p>
             </el-col>
             <el-col :span="4" class="button">
-              <el-button type="primary" size="small">收藏</el-button>
+              <el-button type="primary" size="small" :disabled="isCollected" @click="handleCollect">
+                {{ isCollected ? "已收藏" : "收藏" }}
+              </el-button>
             </el-col>
           </el-row>
           <el-divider />
@@ -100,9 +102,10 @@
             <h2>相关房源</h2>
             <div v-if="relatedHouses.length">
               <el-row>
-                <el-col :span="24" v-for="house in relatedHouses" :key="house._id" @click="goToDetail(house._id)">
-                  <div class="card" >
-                    <el-image style="width: 150px; height: 150px" :src="'http://localhost:3000' + house.houseImg[0]" fit="cover" />
+                <el-col :span="24" v-for="house in relatedHouses.slice(0, 6)" :key="house._id" @click="goToDetail(house._id)" >
+                  <div class="card">
+                    <el-image style="width: 150px; height: 150px" :src="'http://localhost:3000' + house.houseImg[0]"
+                      fit="cover" />
                     <div class="info">
                       <p>{{ house.title }}</p>
                       <p>{{ house.address }}</p>
@@ -131,17 +134,24 @@
 </template>
 
 <script setup>
-import { onMounted, reactive, ref, watch } from "vue";
+import { onMounted, reactive, ref, watch, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import axios from "axios";
 import moment from "moment";
+import { useStore } from 'vuex'
 import Nav from "@/components/web/Nav.vue";
+import {ElMessage} from 'element-plus';
 
+
+const userStore = useStore()
 const router = useRouter();
 const route = useRoute();
 const houseForm = reactive({});
 const relatedHouses = ref([]);
 
+const isCollected = computed(() => {
+  return userStore.state.userInfo.collects.includes(houseForm._id);
+});
 const goBack = () => {
   window.location.href = "/";
 };
@@ -150,6 +160,17 @@ const goToDetail = (_id) => {
     router.push(`/housedetail/${_id}`);
   } catch (error) {
     console.error("Error while navigating:", error);
+  }
+};
+const handleCollect = async () => {
+  try {
+    await axios.post("/adminapi/userEdit/collect/", { houseId: houseForm._id });
+  
+    userStore.commit('addCollect',houseForm._id)
+    ElMessage.success("收藏成功！");
+  } catch (error) {
+    console.error("收藏失败:", error);
+    ElMessage.error("收藏失败，请稍后重试！");
   }
 };
 
@@ -260,12 +281,14 @@ const fetchData = async (id) => {
   }
 
 }
+
 .button {
   display: flex;
   justify-content: center;
   align-items: center;
-  
+
 }
+
 .contact {
   .el-col {
     display: flex;
@@ -286,16 +309,18 @@ const fetchData = async (id) => {
     }
   }
 }
+
 .card {
   display: flex;
   padding: 10px;
   height: 160px;
   border: 1px solid #ccc;
   border-radius: 10px;
-  .info{
+
+  .info {
     width: 50%;
   }
-  p{
-  }
+
+  p {}
 }
 </style>

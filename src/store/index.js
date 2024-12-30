@@ -22,6 +22,9 @@ export default createStore({
         ...value
       }
     },
+    addCollect(state, value) {
+      state.userInfo.collects.push(value)
+    },
     clearUserInfo(state,value) {
       state.userInfo = {}
     },
