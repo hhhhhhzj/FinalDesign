@@ -49,44 +49,38 @@ const HouseController = {
     }
   },
 
-      search: async (req, res) => {
-        try {
-          const { keyword = "" } = req.query;
-    
-          // 构建模糊搜索条件
-          const query = {
-            isPublish: 1,
-            $or: [
-              { title: new RegExp(keyword, "i") },
-              { community: new RegExp(keyword, "i") },
-              { address: new RegExp(keyword, "i") },
-              { decoration: new RegExp(keyword, "i") },
-              { orientation: new RegExp(keyword, "i") },
-              { subway: new RegExp(keyword, "i") },
-              { propertyType: new RegExp(keyword, "i") },
-              { buildTime: new RegExp(keyword, "i") },
-              { roomNum: Number(keyword) || undefined },
-              { hallNum: Number(keyword) || undefined },
-              { toiletNum: Number(keyword) || undefined },
-              { floor: Number(keyword) || undefined },
-              { price: Number(keyword) || undefined },
-              { area: Number(keyword) || undefined },
-              { perSquarePrice: Number(keyword) || undefined },
-            ],
-          };
-    
-          // 调用服务层获取数据
-          const data = await HouseService.search(query);
-    
-          res.send({
-            ActionType: "ok",
-            data,
-          });
-        } catch (error) {
-          console.error("搜索失败:", error);
-          res.status(500).send({ ActionType: "error", message: "搜索失败" });
-        }
-      },
+  getDetail: async (req, res) => {
+    try {
+        const result = await HouseService.getDetail({ _id: req.params.id });
+        res.send({
+            ActionType: 'ok',
+            data: result,
+        });
+    } catch (error) {
+        console.error('获取房源列表失败:', error);
+        res.status(500).send({ ActionType: 'error', message: '获取房源列表失败' });
+    }
+},
+getSimilarHouses: async (req, res) => {
+  try {
+    const { address, excludeId, limit = 5 } = req.query;
+    if (!address) {
+      return res.status(400).send({ ActionType: 'error', message: '地址不能为空' });
+    }
+
+    // 查询条件：同地址且排除当前房源
+    const query = { address, _id: { $ne: excludeId }, isPublish: 1 };
+
+    // 调用服务层方法获取相关房源
+    const data = await HouseService.getSimilarHouses(query, +limit);
+
+    res.send({ ActionType: 'ok', data });
+  } catch (error) {
+    console.error('获取相关房源失败:', error);
+    res.status(500).send({ ActionType: 'error', message: '获取相关房源失败' });
+  }
+},
+
 };
 
 module.exports = HouseController;

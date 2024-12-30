@@ -34,6 +34,11 @@ const routes = [
     component: () => import("../views/public/SearchResult.vue"),
   },
   {
+    path: '/housedetail/:id',
+    component: () => import('@/views/public/HouseDetail.vue'),
+    requireAdmin: true
+},
+  {
     path: "/mainbox",
     name: "mainbox",
     component: () => import("../views/admin/MainBox.vue"),

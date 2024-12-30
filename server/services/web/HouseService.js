@@ -21,14 +21,27 @@ const HouseService = {
           throw error;
         }
       },
-      search: async (query) => {
+
+      getDetail: async ({ _id }) => {
         try {
-          return await HouseModel.find(query).sort({ createdAt: -1 });
+            const query = { isPublish: 1 }; // 只查询 isPublish 为 1 的数据
+            if (_id) {
+                query._id = _id; // 如果有 _id 参数，则进一步过滤
+            }
+            return await HouseModel.find(query);
         } catch (error) {
-          console.error("HouseService.search error:", error);
-          throw error;
+            console.error('houseService.getDetail error:', error);
+            throw error;
         }
-      },
+    },
+    getSimilarHouses: async (query, limit = 5) => {
+      try {
+        return await HouseModel.find(query).limit(limit).sort({ createdAt: -1 });
+      } catch (error) {
+        console.error('houseService.getSimilarHouses error:', error);
+        throw error;
+      }
+    },
   };
 
 module.exports = HouseService;
