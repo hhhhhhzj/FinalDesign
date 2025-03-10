@@ -25,9 +25,6 @@
                 </el-table-column>
                 <el-table-column label="Operations">
                     <template #default="scope">
-                        <el-button size="small" @click="handleEdit(scope.row)">
-                            编辑
-                        </el-button>
                         <el-popconfirm title="你确定要删除吗?"
                         confirmButtonText="确定" cancelButtonText="取消"
                         @confirm="handleDelete(scope.row)">

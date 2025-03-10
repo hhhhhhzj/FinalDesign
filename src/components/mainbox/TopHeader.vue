@@ -2,7 +2,7 @@
     <el-header>
         <div class="left">
             <el-icon>
-                <Menu @click="handleCollapsed" />
+                <Menu/>
             </el-icon>
             <span style="margin-left:10px;">寄居蟹二手房管理系统</span>
         </div>
@@ -33,9 +33,7 @@ import { Menu, User, ArrowDown } from '@element-plus/icons-vue'
 import { useRouter } from 'vue-router';
 const store = useStore()
 const router = useRouter()
-const handleCollapsed = () => {
-    store.commit('changeCollapsed')
-}
+
 const handleCenter = () => {
     router.push('/home')
 }
